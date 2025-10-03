@@ -1,0 +1,23 @@
+{
+  "name": "@genuine-forms/web-components",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "genuine-form.js",
+  "module": "genuine-form.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cryptNG/genuine-forms-vanillajs.git"
+  },
+  "keywords": [
+    "genuine-forms"
+  ],
+  "author": "CryptNg",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cryptNG/genuine-forms-vanillajs/issues"
+  },
+  "homepage": "https://github.com/cryptNG/genuine-forms-vanillajs#readme"
+}
