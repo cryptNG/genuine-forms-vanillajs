@@ -1,6 +1,7 @@
 
 
-//defer loading because of fastboot and similar
+
+const GenuineCaptcha = require('@genuine-captcha/web-components')
 
 
 export default class GenuineForm extends HTMLElement {

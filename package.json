@@ -1,6 +1,6 @@
 {
   "name": "@genuine-forms/web-components",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "type": "module",
   "main": "genuine-form.js",
   "module": "genuine-form.js",
@@ -19,5 +19,8 @@
   "bugs": {
     "url": "https://github.com/cryptNG/genuine-forms-vanillajs/issues"
   },
-  "homepage": "https://github.com/cryptNG/genuine-forms-vanillajs#readme"
+  "homepage": "https://github.com/cryptNG/genuine-forms-vanillajs#readme",
+  "dependencies": {
+    "@genuine-captcha/web-components": "^1.0.7"
+  }
 }
