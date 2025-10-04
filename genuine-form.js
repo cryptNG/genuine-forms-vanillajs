@@ -20,6 +20,7 @@ export default class GenuineForm extends HTMLElement {
     this.prompt = '';
     this.secret = '';
     this.solution = '';
+    this.receiver = '';
     this.subject = this.getAttribute('subject') || 'Generic Subject';
     const template = document.getElementById('genuine-form');
     const templateContent = template.content;
@@ -128,15 +129,17 @@ export default class GenuineForm extends HTMLElement {
   }
 
   static get observedAttributes() {
-    return ['subject'];
+    return ['subject','receiver'];
   }
   attributeChangedCallback(name, oldValue, newValue) {
     if (name === 'subject') this.subject = newValue;
+    if (name === 'receiver') this.receiver = newValue;
   }
 
   sendForm=async (event)=>{
         event.preventDefault();
-        if(!this.isVerifiedCaptcha || !this.isValidForm){
+        if(!this.isVerifiedCaptcha || !this.isValidForm || this.receiver===''){
+            console.log("Form not valid or Captcha not verified or no receiver set.");
             return;
         }
 
@@ -144,7 +147,7 @@ export default class GenuineForm extends HTMLElement {
 
         try{
             const url = window.location.origin.indexOf('localhost')>-1 ? 'https://www.novent-concepts.de' : `${window.location.origin}`;
-            const response = await fetch(`${url}/api/captcha/send.json/?captchaSolution=${this.solution}&captchaSecret=${encodeURIComponent(this.secret)}&subject=${subject}&body=${body}`, {
+            const response = await fetch(`${url}/api/captcha/send.json/?captchaSolution=${this.solution}&captchaSecret=${encodeURIComponent(this.secret)}&receiver=${this.receiver}&subject=${subject}&body=${body}`, {
                 method: 'GET'
             });
 
