@@ -1,7 +1,7 @@
 
 
 
-const GenuineCaptcha = require('@genuine-captcha/web-components')
+import {GenuineCaptcha} from '@genuine-captcha/web-components';
 
 
 export default class GenuineForm extends HTMLElement {
@@ -10,7 +10,7 @@ export default class GenuineForm extends HTMLElement {
   solution=null;
   isVerifiedCaptcha=false;
   timerId=null;
-  gcApiUrl = window.location.origin.indexOf('localhost')>-1 ? window.location.origin : `https://api.genuine-captcha.io`;
+  gfApiUrl = `https://www.novent-concepts.de`;
 
   handleSendResponse=(response)=>{console.log("Default handleSendResponse:", response); return response;};
   handleValidateForm=(form)=>{return _isValidForm(form);};
@@ -147,8 +147,8 @@ export default class GenuineForm extends HTMLElement {
         const {subject,body} = this.generateSubjectAndBody(this,this.subject);
 
         try{
-            const url = window.location.origin.indexOf('localhost')>-1 ? 'https://www.novent-concepts.de' : `${window.location.origin}`;
-            const response = await fetch(`${url}/api/captcha/send.json/?captchaSolution=${this.solution}&captchaSecret=${encodeURIComponent(this.secret)}&receiver=${this.receiver}&subject=${subject}&body=${body}`, {
+            const url = gfApiUrl;
+            const response = await fetch(`${url}/api/captcha/send.json/?captchaSolution=${this.solution}&captchaSecret=${encodeURIComponent(this.secret)}&receiver=${this.receiver}&subject=${subject}&body=${body}&from=`+encodeURIComponent('genuine-forms@novent.de'), {
                 method: 'GET'
             });
 
@@ -176,6 +176,7 @@ export default class GenuineForm extends HTMLElement {
         }
     }
 }
+
 
 async function Sleep(milliseconds) {
   return new Promise((resolve) => setTimeout(resolve, milliseconds));
