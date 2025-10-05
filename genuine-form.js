@@ -10,6 +10,7 @@ export default class GenuineForm extends HTMLElement {
   solution=null;
   isVerifiedCaptcha=false;
   timerId=null;
+  name=null;
   gfApiUrl = `https://www.novent-concepts.de`;
 
   handleSendResponse=(response)=>{console.log("Default handleSendResponse:", response); return response;};
@@ -87,8 +88,9 @@ export default class GenuineForm extends HTMLElement {
 
   connectedCallback() {
        setTimeout(() => {
-        const submitBtn = window.document.querySelector('[type="submit"]')
-        if(submitBtn) submitBtn.addEventListener('click', (event) => {
+        const submitBtns = !this.name? window.document.querySelectorAll('genuine-form [type="submit"]'):window.document.querySelectorAll(`genuine-form[name="${this.name}"] [type="submit"]`);
+        if(submitBtns.length>1 && !this.name) console.warn("Multiple submit buttons found in genuine-form, only the first one will be used. Use unique named genuine-form if you need multiple forms on one page.");
+        if(submitBtns[0]) submitBtns[0].addEventListener('click', (event) => {
           event.stopPropagation();
           this.sendForm(event);
         });
@@ -130,11 +132,12 @@ export default class GenuineForm extends HTMLElement {
   }
 
   static get observedAttributes() {
-    return ['subject','receiver'];
+    return ['subject','receiver','name'];
   }
   attributeChangedCallback(name, oldValue, newValue) {
     if (name === 'subject') this.subject = newValue;
     if (name === 'receiver') this.receiver = newValue;
+    if (name === 'name') this.name = newValue;
   }
 
   sendForm=async (event)=>{
