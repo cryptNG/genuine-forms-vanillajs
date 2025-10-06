@@ -132,12 +132,13 @@ export default class GenuineForm extends HTMLElement {
   }
 
   static get observedAttributes() {
-    return ['subject','receiver','name'];
+    return ['subject','receiver','name','api-url'];
   }
   attributeChangedCallback(name, oldValue, newValue) {
     if (name === 'subject') this.subject = newValue;
     if (name === 'receiver') this.receiver = newValue;
     if (name === 'name') this.name = newValue;
+    if (name === 'api-url') this.gfApiUrl = newValue;
   }
 
   sendForm=async (event)=>{
