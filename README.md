@@ -77,7 +77,9 @@ import '@genuine-forms/web-components';
 **Attributes**
 
 * `subject` *(string)* — Subject line used for the outgoing message.
-* `api-key` *(string, optional)* — For setups that require an API key. (If you don’t use a hosted backend, you can ignore or repurpose this.)
+* `name` *(string, optional)* — For setups using multiple genuine-form on the same page you need to provide unique names.
+* `api-key` *(string, optional)* — For setups that require an API key.
+* `api-url` *(string, optional)* — For setups that require a custom API endpoint. (If you don’t use a hosted backend, you can ignore or repurpose this.)
 
 **Slot content**
 
