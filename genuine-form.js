@@ -152,7 +152,7 @@ export default class GenuineForm extends HTMLElement {
 
         try{
             const url = this.gfApiUrl;
-            const response = await fetch(`${url}/api/captcha/send/?captchaSolution=${this.solution}&captchaSecret=${encodeURIComponent(this.secret)}&receiver=${this.receiver}&subject=${subject}&body=${body}&from=`+encodeURIComponent('genuine-forms@novent.de'), {
+            const response = await fetch(`${url}/api/captcha/gf-send-dev/?captchaSolution=${this.solution}&captchaSecret=${encodeURIComponent(this.secret)}&receiver=${this.receiver}&subject=${subject}&body=${body}&from=`+encodeURIComponent('genuine-forms@novent.de'), {
                 method: 'GET'
             });
 
