@@ -11,7 +11,7 @@ export default class GenuineForm extends HTMLElement {
   isVerifiedCaptcha=false;
   timerId=null;
   name=null;
-  gfApiUrl = `https://www.novent-concepts.de`;
+  gfApiUrl = `https://genuine-forms.io/api/gf-send-dev`;
 
   handleSendResponse=(response)=>{console.log("Default handleSendResponse:", response); return response;};
   handleValidateForm=(form)=>{return _isValidForm(form);};
@@ -149,7 +149,7 @@ export default class GenuineForm extends HTMLElement {
 
         try{
             const url = this.gfApiUrl;
-            const response = await fetch(`${url}/api/captcha/send.json/?captchaSolution=${this.solution}&captchaSecret=${encodeURIComponent(this.secret)}&receiver=${this.receiver}&subject=${subject}&body=${body}&from=`+encodeURIComponent('genuine-forms@novent.de'), {
+            const response = await fetch(`${url}/?captchaSolution=${this.solution}&captchaSecret=${encodeURIComponent(this.secret)}&receiver=${this.receiver}&subject=${subject}&body=${body}&from=`+encodeURIComponent('genuine-forms@novent.de'), {
                 method: 'GET'
             });
 
