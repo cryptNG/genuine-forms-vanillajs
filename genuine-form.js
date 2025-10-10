@@ -33,25 +33,22 @@ export default class GenuineForm extends HTMLElement {
     const style = document.createElement('style');
     style.textContent = `
           :host{
-            --underline-color:red;
-            --underline-style:dashed;
-            --underline-width:0.1em;
-            --underline-top:calc(50% + 0.5em);
-            --text-color:inherited;
-            --text-family:revert;
-            --text-size:auto;
-            --text-cursor:pointer;
-            --underline-rgb:linear-gradient(90deg, #e50b58,#b29d23,#55ddbd);
-            --underline-rgb-1:linear-gradient(90deg, #ae1ffd,#ff3c34,#9bbf24);
-            --underline-rgb-2:linear-gradient(130deg,#2E3192,#1BFFFF 76.05%);
-            --underline-rgb-3:linear-gradient(130deg,#ff7a18,#af002d 41.07%,#319197 76.05%);
-            --underline-rgb-5:linear-gradient(130deg,#ff7a18,#af002d 41.07%,#319197 76.05%);
-            --asterisk-margin-right:0.2em;
+            --form-display:flex;
+            --form-flex-direction:column;
+            --form-gap:1rem;
+            --form-padding:1rem;
+            --form-border-radius:0.5rem;
+            --form-border:1px solid #ccc;
+            --form-background-color:#fff;
+            --form-box-shadow:0 2px 4px rgba(0,0,0,0.1);
+      
           }
 
           .genuine-form-container{
-            display: inline-block;
-            position: relative; 
+            display: var(--form-display);
+            position: relative;
+            flex-direction:  var(--form-flex-direction);
+            gap: var(--form-gap);
           }
       `;
 
