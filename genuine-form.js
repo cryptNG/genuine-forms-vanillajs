@@ -16,7 +16,7 @@ export default class GenuineForm extends HTMLElement {
   handleSendResponse=async(response)=>{console.log("Default handleSendResponse:", response);};
   handleStartSending=async()=>{};
   handleFinishedSending=async()=>{};
-  handleValidateForm=(form)=>{return _isValidForm(form);};
+  handleValidateForm=(name,form)=>{return _isValidForm(name,form);};
   handleValidationFailed=async ()=>{};
   handleInitialized=(formName,formInstance)=>{console.log("Default handleInitialized:", formName, formInstance);};
   generateSubjectAndBody=(form,subject='Generic Subject')=>{return {subject:subject,body:JSON.stringify( _collectFormValues(form))};};
@@ -238,7 +238,7 @@ if (typeof document !== 'undefined') {
   customElements.define('genuine-form', GenuineForm);
 }
 
-function _isValidForm(rootNode) {
+function _isValidForm(name,rootNode) {
   const elements = rootNode.querySelectorAll("input, select, textarea");
 
   for (let el of elements) {
