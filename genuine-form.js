@@ -2,6 +2,7 @@
 
 
 import {GenuineCaptcha} from 'https://cryptng.github.io/genuine-captcha-vanillajs/genuine-captcha.js';
+import { off } from 'node:process';
 
 
 export default class GenuineForm extends HTMLElement {
@@ -10,11 +11,14 @@ export default class GenuineForm extends HTMLElement {
   solution=null;
   isVerifiedCaptcha=false;
   timerId=null;
-  name=null;
+  name='genuine-form';
   gfApiUrl = `https://genuine-forms.io/api/gf-send-dev`;
 
-  handleSendResponse=(response)=>{console.log("Default handleSendResponse:", response); return response;};
+  handleSendResponse=async(response)=>{console.log("Default handleSendResponse:", response);};
+  handleStartSending=async()=>{};
+  handleFinishedSending=async()=>{};
   handleValidateForm=(form)=>{return _isValidForm(form);};
+  handleInitialized=null;
   generateSubjectAndBody=(form,subject='Generic Subject')=>{return {subject:subject,body:JSON.stringify( _collectFormValues(form))};};
 
   constructor() {
@@ -23,7 +27,22 @@ export default class GenuineForm extends HTMLElement {
     this.secret = '';
     this.solution = '';
     this.receiver = '';
+    this._apiKey=undefined
     this.subject = this.getAttribute('subject') || 'Generic Subject';
+    this.events={
+      on:(type, handler)=>{
+        if(type==='send-response') this.handleSendResponse=(async (response)=>handler(response));
+        if(type==='started-sending') this.handleStartSending=(async ()=>handler());
+        if(type==='finished-sending') this.handleFinishedSending=(async ()=>handler());
+      },
+      off:(type)=>{
+        if(type==='send-response') this.handleSendResponse=(response)=>{console.log("Default handleSendResponse:", response); return response;};
+        if(type==='started-sending') this.handleStartSending=()=>{};
+        if(type==='finished-sending') this.handleFinishedSending=()=>{};  
+      }
+    };
+
+    if(!window.genuineForms) window.genuineForms={};
     const template = document.getElementById('genuine-form');
     const templateContent = template.content;
 
@@ -78,20 +97,25 @@ export default class GenuineForm extends HTMLElement {
         this.solution='';
         this.secret='';
     }
-    this.registerHandleSendResponse();
     this.registerHandleValidateForm();
     this.registerGenerateSubjectAndBody();
   }
 
   connectedCallback() {
-       setTimeout(() => {
-        const submitBtns = !this.name? window.document.querySelectorAll('genuine-form [type="submit"]'):window.document.querySelectorAll(`genuine-form[name="${this.name}"] [type="submit"]`);
-        if(submitBtns.length>1 && !this.name) console.warn("Multiple submit buttons found in genuine-form, only the first one will be used. Use unique named genuine-form if you need multiple forms on one page.");
-        if(submitBtns[0]) submitBtns[0].addEventListener('click', (event) => {
-          event.stopPropagation();
-          this.sendForm(event);
-        });
-       }, 100);
+    window.genuineForms[this.name]=this.events;
+    setTimeout(() => {
+    const submitBtns = !this.name? window.document.querySelectorAll('genuine-form [type="submit"]'):window.document.querySelectorAll(`genuine-form[name="${this.name}"] [type="submit"]`);
+    if(submitBtns.length>1 && !this.name) console.warn("Multiple submit buttons found in genuine-form, only the first one will be used. Use unique named genuine-form if you need multiple forms on one page.");
+    if(submitBtns[0]) submitBtns[0].addEventListener('click', (event) => {
+      event.stopPropagation();
+      this.sendForm(event);
+    });
+    }, 100);
+
+    (async()=>{
+      await this.registerHandleInitialized();
+      if(this.handleInitialized) this.handleInitialized(this.name,this);
+    })();
   }
 
   disconnectedCallback() {
@@ -100,56 +124,66 @@ export default class GenuineForm extends HTMLElement {
       this.timerId = null;
     }
   }
-  registerHandleSendResponse = async () => {
-    
-    while (window.genuineFormHandleSendResponse === undefined) {
-      await Sleep(100);
-    }
-    this.handleSendResponse = window.genuineFormHandleSendResponse;
-  };
+ 
 
   registerHandleValidateForm = async () => {
-    
-    while (window.genuineFormHandleValidate === undefined) {
+    let counter=0;
+    while (window.genuineFormHandleValidate === undefined && counter<150) {
+      counter++;
       await Sleep(100);
     }
     this.handleValidateForm = window.genuineFormHandleValidate;
   };
 
+  registerHandleInitialized = async () => {
+    let counter=0;
+    while (window.genuineFormHandleInitialized === undefined && counter<150) {
+      counter++;
+      await Sleep(100);
+    }
+    this.handleInitialized = window.genuineFormHandleValidate;
+  };
+
   registerGenerateSubjectAndBody = async () => {
-    
-    while (window.genuineFormGenerateSubjectAndBody === undefined) {
+    let counter=0;
+    while (window.genuineFormGenerateSubjectAndBody === undefined && counter<150) {
+      counter++;
       await Sleep(100);
     }
     this.generateSubjectAndBody = window.genuineFormGenerateSubjectAndBody;
   }
 
   get isValidForm(){
-    return this.handleValidateForm(this);
+    return this.handleValidateForm(this.name,this);
   }
 
   static get observedAttributes() {
-    return ['subject','receiver','name','api-url'];
+    return ['subject','receiver','api-key','name','api-url'];
   }
   attributeChangedCallback(name, oldValue, newValue) {
     if (name === 'subject') this.subject = newValue;
     if (name === 'receiver') this.receiver = newValue;
+    if (name === 'api-key') this._apiKey = newValue;
     if (name === 'name') this.name = newValue;
     if (name === 'api-url') this.gfApiUrl = newValue;
   }
 
+  get apiKey(){
+    return this._apiKey || this.receiver;
+  }
+
   sendForm=async (event)=>{
         event.preventDefault();
-        if(!this.isVerifiedCaptcha || !this.isValidForm || this.receiver===''){
-            console.log("Form not valid or Captcha not verified or no receiver set.");
+        if(!this.isVerifiedCaptcha || !this.isValidForm || this.apiKey===''){
+            console.log("Form not valid or Captcha not verified or no receiver/api-key set.");
             return;
         }
 
-        const {subject,body} = this.generateSubjectAndBody(this,this.subject);
+        const {subject,body} = this.generateSubjectAndBody(this.name,this,this.subject);
 
         try{
             const url = this.gfApiUrl;
-            const response = await fetch(`${url}/?captchaSolution=${this.solution}&captchaSecret=${encodeURIComponent(this.secret)}&receiver=${this.receiver}&subject=${subject}&body=${body}&from=`+encodeURIComponent('genuine-forms@novent.de'), {
+            const response = await fetch(`${url}/?captchaSolution=${this.solution}&captchaSecret=${encodeURIComponent(this.secret)}&apiKey=${this.apiKey}&subject=${subject}&body=${body}`, {
                 method: 'GET'
             });
 
