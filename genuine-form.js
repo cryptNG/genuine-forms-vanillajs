@@ -2,7 +2,6 @@
 
 
 import {GenuineCaptcha} from 'https://cryptng.github.io/genuine-captcha-vanillajs/genuine-captcha.js';
-import { off } from 'node:process';
 
 
 export default class GenuineForm extends HTMLElement {
