@@ -18,8 +18,8 @@ export default class GenuineForm extends HTMLElement {
   handleFinishedSending=async()=>{};
   handleValidateForm=(name,form)=>{return _isValidForm(name,form);};
   handleValidationFailed=async ()=>{};
-  handleInitialized=(formName,formInstance)=>{console.log("Default handleInitialized:", formName, formInstance);};
-  generateSubjectAndBody=(form,subject='Generic Subject')=>{return {subject:subject,body:JSON.stringify( _collectFormValues(form))};};
+  handleInitialized=(name,form)=>{console.log("Default handleInitialized:", name, form);};
+  generateSubjectAndBody=(name,form,subject='Generic Subject')=>{return {subject:subject,body:JSON.stringify( _collectFormValues(form))};};
 
   constructor() {
     super();
