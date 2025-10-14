@@ -17,7 +17,7 @@ export default class GenuineForm extends HTMLElement {
   handleStartSending=async()=>{};
   handleFinishedSending=async()=>{};
   handleValidateForm=(form)=>{return _isValidForm(form);};
-  handleInitialized=null;
+  handleInitialized=(formName,formInstance)=>{console.log("Default handleInitialized:", formName, formInstance);};
   generateSubjectAndBody=(form,subject='Generic Subject')=>{return {subject:subject,body:JSON.stringify( _collectFormValues(form))};};
 
   constructor() {
@@ -113,7 +113,7 @@ export default class GenuineForm extends HTMLElement {
 
     (async()=>{
       await this.registerHandleInitialized();
-      if(this.handleInitialized) this.handleInitialized(this.name,this);
+      this.handleInitialized(this.name,this);
     })();
   }
 
@@ -131,7 +131,7 @@ export default class GenuineForm extends HTMLElement {
       counter++;
       await Sleep(100);
     }
-    this.handleValidateForm = window.genuineFormHandleValidate;
+    this.handleValidateForm = window.genuineFormHandleValidate || this.handleValidateForm;
   };
 
   registerHandleInitialized = async () => {
@@ -140,7 +140,7 @@ export default class GenuineForm extends HTMLElement {
       counter++;
       await Sleep(100);
     }
-    this.handleInitialized = window.genuineFormHandleValidate;
+    this.handleInitialized = window.genuineFormHandleValidate || this.handleInitialized;
   };
 
   registerGenerateSubjectAndBody = async () => {
@@ -149,7 +149,7 @@ export default class GenuineForm extends HTMLElement {
       counter++;
       await Sleep(100);
     }
-    this.generateSubjectAndBody = window.genuineFormGenerateSubjectAndBody;
+    this.generateSubjectAndBody = window.genuineFormGenerateSubjectAndBody || this.generateSubjectAndBody;
   }
 
   get isValidForm(){
