@@ -17,6 +17,7 @@ export default class GenuineForm extends HTMLElement {
   handleStartSending=async()=>{};
   handleFinishedSending=async()=>{};
   handleValidateForm=(form)=>{return _isValidForm(form);};
+  handleValidationFailed=async ()=>{};
   handleInitialized=(formName,formInstance)=>{console.log("Default handleInitialized:", formName, formInstance);};
   generateSubjectAndBody=(form,subject='Generic Subject')=>{return {subject:subject,body:JSON.stringify( _collectFormValues(form))};};
 
@@ -33,11 +34,13 @@ export default class GenuineForm extends HTMLElement {
         if(type==='send-response') this.handleSendResponse=(async (response)=>handler(response));
         if(type==='started-sending') this.handleStartSending=(async ()=>handler());
         if(type==='finished-sending') this.handleFinishedSending=(async ()=>handler());
+        if(type==='validation-failed') this.handleValidationFailed=(async ()=>handler());
       },
       off:(type)=>{
         if(type==='send-response') this.handleSendResponse=(response)=>{console.log("Default handleSendResponse:", response); return response;};
-        if(type==='started-sending') this.handleStartSending=()=>{};
-        if(type==='finished-sending') this.handleFinishedSending=()=>{};  
+        if(type==='started-sending') this.handleStartSending=async ()=>{};
+        if(type==='finished-sending') this.handleFinishedSending=async ()=>{};  
+        if(type==='validation-failed') this.handleValidationFailed=async ()=>{};
       }
     };
 
@@ -107,6 +110,7 @@ export default class GenuineForm extends HTMLElement {
     if(submitBtns.length>1 && !this.name) console.warn("Multiple submit buttons found in genuine-form, only the first one will be used. Use unique named genuine-form if you need multiple forms on one page.");
     if(submitBtns[0]) submitBtns[0].addEventListener('click', (event) => {
       event.stopPropagation();
+      if(!this.isValidForm) this.handleValidationFailed();
       this.sendForm(event);
     });
     }, 100);
