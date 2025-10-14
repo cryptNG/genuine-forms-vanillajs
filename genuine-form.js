@@ -144,7 +144,7 @@ export default class GenuineForm extends HTMLElement {
       counter++;
       await Sleep(100);
     }
-    this.handleInitialized = window.genuineFormHandleValidate || this.handleInitialized;
+    this.handleInitialized = window.genuineFormHandleInitialized || this.handleInitialized;
   };
 
   registerGenerateSubjectAndBody = async () => {
