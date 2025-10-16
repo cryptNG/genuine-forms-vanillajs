@@ -106,7 +106,7 @@ export default class GenuineForm extends HTMLElement {
   connectedCallback() {
     window.genuineForms[this.name]=this.events;
     setTimeout(() => {
-    const submitBtns = !this.name? window.document.querySelectorAll('genuine-form [type="submit"]'):window.document.querySelectorAll(`genuine-form[name="${this.name}"] [type="submit"]`);
+    const submitBtns = (!this.name || this.name==='genuine-form') ? window.document.querySelectorAll('genuine-form [type="submit"]'):window.document.querySelectorAll(`genuine-form[name="${this.name}"] [type="submit"]`);
     if(submitBtns.length>1 && !this.name) console.warn("Multiple submit buttons found in genuine-form, only the first one will be used. Use unique named genuine-form if you need multiple forms on one page.");
     if(submitBtns[0]) submitBtns[0].addEventListener('click', (event) => {
       event.stopPropagation();
@@ -186,7 +186,7 @@ export default class GenuineForm extends HTMLElement {
 
         try{
             const url = this.gfApiUrl;
-            const response = await fetch(`${url}/?captchaSolution=${this.solution}&captchaSecret=${encodeURIComponent(this.secret)}&apiKey=${this.apiKey}&subject=${subject}&body=${body}`, {
+            const response = await fetch(`${url}/?captchaSolution=${this.solution}&captchaSecret=${encodeURIComponent(this.secret)}&apiKey=${this.apiKey}&subject=${subject}&body=${encodeURI(body)}`, {
                 method: 'GET'
             });
 
