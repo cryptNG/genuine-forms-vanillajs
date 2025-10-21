@@ -60,7 +60,7 @@ export default class GenuineForm extends HTMLElement {
             --form-padding:1rem;
             --form-border-radius:0.5rem;
             --form-border:1px solid #ccc;
-            --form-background-color:#fff;
+            --form-background-color:transparent;
             --form-box-shadow:0 2px 4px rgba(0,0,0,0.1);
       
           }
@@ -70,6 +70,7 @@ export default class GenuineForm extends HTMLElement {
             position: relative;
             flex-direction:  var(--form-flex-direction);
             gap: var(--form-gap);
+            background-color:var(--form-background-color);
           }
       `;
 
@@ -229,9 +230,7 @@ if (typeof document !== 'undefined') {
   <form class="genuine-form-container">
         
         <slot></slot>
-        </form>
-        
-    </div>`;
+        </form>`;
 
   document.querySelector('body').prepend(tpl1);
 
