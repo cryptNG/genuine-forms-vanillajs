@@ -5,6 +5,7 @@
   "main": "genuine-form.js",
   "module": "genuine-form.js",
   "scripts": {
+    "minify": "minify genuine-form.js > genuine-form.min.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -21,6 +22,7 @@
   },
   "homepage": "https://github.com/cryptNG/genuine-forms-vanillajs#readme",
   "dependencies": {
-    "@genuine-captcha/web-components": "1.0.15"
+    "@genuine-captcha/web-components": "1.0.15",
+    "minify": "^14.1.0"
   }
 }
