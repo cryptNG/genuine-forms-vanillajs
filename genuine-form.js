@@ -27,6 +27,7 @@ export default class GenuineForm extends HTMLElement {
     this.secret = '';
     this.solution = '';
     this.receiver = '';
+    this.genuineCaptchaNode=null;
     this._apiKey=undefined
     this.subject = this.getAttribute('subject') || 'Generic Subject';
     this.events={
@@ -84,16 +85,30 @@ export default class GenuineForm extends HTMLElement {
     let slots = this.shadowRoot.querySelectorAll('slot');
     console.log(slots);
 
-    
-
-    window.genuineCaptchaHandleVerify=(solution, secret) =>{
+    this.myHandleVerify=(name,solution, secret) =>{
         console.log("CAPTCHA verified:", solution, secret);
-        this.isVerifiedCaptcha=true;
-        this.solution=solution;
-        this.secret=secret;
+        if(name===this.name){
+          this.isVerifiedCaptcha=true;
+          this.solution=solution;
+          this.secret=secret;
+        }
     }
 
-    window.genuineCaptchaHandleReset=() =>{
+    if(window.genuineCaptchaHandleVerify){
+      const oldHandleVerify=window.genuineCaptchaHandleVerify;
+      window.genuineCaptchaHandleVerify=(name,solution, secret) =>{
+
+        this.myHandleVerify(name,solution, secret);
+
+        (async (name,solution, secret)=>{
+          oldHandleVerify(name,solution, secret);
+        })(name,solution, secret)
+      }
+    }else
+
+    window.genuineCaptchaHandleVerify=this.myHandleVerify;
+
+    window.genuineCaptchaHandleReset=(name) =>{
         console.log("CAPTCHA resetted");
         this.mailTo='';
         this.isVerifiedCaptcha=false;
@@ -117,9 +132,38 @@ export default class GenuineForm extends HTMLElement {
     }, 100);
 
     (async()=>{
+      let counter = 0;
+
+      while(this.genuineCaptchaNode===null && counter<15){
+        const slotChilds= this.shadowRoot.querySelectorAll('slot')[0].assignedNodes();
+        slotChilds.forEach((node)=>{
+          const genuineCaptchaNode = node.nodeName==='GENUINE-CAPCTHA'?node:(node.hasChildNodes()?node.querySelector('genuine-captcha'):null)
+          if(genuineCaptchaNode!==null){
+            this.genuineCaptchaNode=genuineCaptchaNode;
+            genuineCaptchaNode.name=this.name;
+          }
+        });
+
+        if(this.genuineCaptchaNode===null){
+          await Sleep(100);
+        }
+
+        counter++;
+      }
+
+      if(this.genuineCaptchaNode===null){
+        console.error('Missing <genuine-captcha> web component');
+        return;
+      }
+
       await this.registerHandleInitialized();
       this.handleInitialized(this.name,this);
+
     })();
+
+    
+
+
   }
 
   disconnectedCallback() {
@@ -168,7 +212,10 @@ export default class GenuineForm extends HTMLElement {
     if (name === 'subject') this.subject = newValue;
     if (name === 'receiver') this.receiver = newValue;
     if (name === 'api-key') this._apiKey = newValue;
-    if (name === 'name') this.name = newValue;
+    if (name === 'name'){
+      this.name = newValue;
+      if(this.genuineCaptchaNode!==null) this.genuineCaptchaNode.attributes['name']=newValue;
+    } 
     if (name === 'api-url') this.gfApiUrl = newValue;
   }
 
