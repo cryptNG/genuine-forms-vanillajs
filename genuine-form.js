@@ -137,7 +137,7 @@ export default class GenuineForm extends HTMLElement {
       while(this.genuineCaptchaNode===null && counter<15){
         const slotChilds= this.shadowRoot.querySelectorAll('slot')[0].assignedNodes();
         slotChilds.forEach((node)=>{
-          const genuineCaptchaNode = node.nodeName==='GENUINE-CAPCTHA'?node:(node.hasChildNodes()?node.querySelector('genuine-captcha'):null)
+          const genuineCaptchaNode = node.nodeName==='GENUINE-CAPTCHA'?node:(node.hasChildNodes()?node.querySelector('genuine-captcha'):null)
           if(genuineCaptchaNode!==null){
             this.genuineCaptchaNode=genuineCaptchaNode;
             genuineCaptchaNode.name=this.name;
