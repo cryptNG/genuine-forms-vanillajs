@@ -5,13 +5,11 @@ import {GenuineCaptcha} from 'https://cryptng.github.io/genuine-captcha-vanillaj
 
 
 export default class GenuineForm extends HTMLElement {
-  shadowRoot = null;
   secret=null;
   solution=null;
   isVerifiedCaptcha=false;
   timerId=null;
-  name='genuine-form';
-  gfApiUrl = `https://genuine-forms.io/api/gf-send-dev`;
+  gfApiUrl = `https://genuine-forms.io/api/gf-send-dev/`;
 
   handleSendResponse=async(response)=>{console.log("Default handleSendResponse:", response);};
   handleStartSending=async()=>{};
@@ -23,34 +21,46 @@ export default class GenuineForm extends HTMLElement {
 
   constructor() {
     super();
-    this.prompt = '';
-    this.secret = '';
-    this.solution = '';
-    this.receiver = '';
-    this.genuineCaptchaNode=null;
-    this._apiKey=undefined
+    this.name = this.getAttribute('name') || 'genuine-form';
     this.subject = this.getAttribute('subject') || 'Generic Subject';
+    this._apiKey = this.getAttribute('api-key');
+    this.receiver = this.getAttribute('receiver');
+    this.gfApiUrl = this.getAttribute('api-url') || this.gfApiUrl;
+    this.abortController = new AbortController();
+    this.genuineCaptchaNode=null;
     this.events={
-      on:(type, handler)=>{
-        if(type==='send-response') this.handleSendResponse=(async (response)=>handler(response));
-        if(type==='started-sending') this.handleStartSending=(async ()=>handler());
-        if(type==='finished-sending') this.handleFinishedSending=(async ()=>handler());
-        if(type==='validation-failed') this.handleValidationFailed=(async ()=>handler());
+      on: (type, handler) => {
+        const wrappedHandler = async (...args) => {
+          try {
+            await handler(...args);
+          } catch (error) {
+            console.error(`Error in ${type} handler:`, error);
+          }
+        };
+        
+        if (type === 'send-response') this.handleSendResponse = wrappedHandler;
+        if (type === 'started-sending') this.handleStartSending = wrappedHandler;
+        if (type === 'finished-sending') this.handleFinishedSending = wrappedHandler;
+        if (type === 'validation-failed') this.handleValidationFailed = wrappedHandler;
       },
-      off:(type)=>{
-        if(type==='send-response') this.handleSendResponse=(response)=>{console.log("Default handleSendResponse:", response); return response;};
-        if(type==='started-sending') this.handleStartSending=async ()=>{};
-        if(type==='finished-sending') this.handleFinishedSending=async ()=>{};  
-        if(type==='validation-failed') this.handleValidationFailed=async ()=>{};
+      off: (type) => {
+        if (type === 'send-response') this.handleSendResponse = (response) => { console.log("Default handleSendResponse:", response); };
+        if (type === 'started-sending') this.handleStartSending = async () => {};
+        if (type === 'finished-sending') this.handleFinishedSending = async () => {};  
+        if (type === 'validation-failed') this.handleValidationFailed = async () => {};
       }
     };
 
     if(!window.genuineForms) window.genuineForms={};
+
     const template = document.getElementById('genuine-form');
+    if (!template) {
+      console.error('Template #genuine-form not found');
+      return;
+    }
     const templateContent = template.content;
 
-    const shadowRoot = this.attachShadow({ mode: 'open' });
-    this.shadowRoot = shadowRoot;
+    this.attachShadow({ mode: 'open' });
 
     const style = document.createElement('style');
     style.textContent = `
@@ -75,104 +85,239 @@ export default class GenuineForm extends HTMLElement {
           }
       `;
 
-    shadowRoot.appendChild(style);
-    shadowRoot.appendChild(templateContent.cloneNode(true));
+    this.shadowRoot.appendChild(style);
+    this.shadowRoot.appendChild(templateContent.cloneNode(true));
 
-    // shadowRoot.querySelector('[type="submit"]').addEventListener('click', (event) => {
-    //   event.stopPropagation();
-    //   this.sendForm(event);
-    // });
-    let slots = this.shadowRoot.querySelectorAll('slot');
-    console.log(slots);
+    this.setupCaptchaHandlerRegistry();
+ 
+    this.hooksReady = Promise.all([
+      this.registerHandleValidateForm(),
+      this.registerGenerateSubjectAndBody(),
+      this.registerHandleInitialized()
+    ]);
+  }
 
-    this.myHandleVerify=(name,solution, secret) =>{
-        console.log("CAPTCHA verified:", solution, secret);
-        if(name===this.name){
-          this.isVerifiedCaptcha=true;
-          this.solution=solution;
-          this.secret=secret;
+  setupCaptchaHandlerRegistry() {
+    // Create global handler registry if it doesn't exist
+    if (!window._genuineFormHandlers) {
+      window._genuineFormHandlers = new Map();
+      
+      // Store original handler if exists
+      const originalHandler = window.genuineCaptchaHandleVerify;
+      
+      // Create global dispatcher
+      window.genuineCaptchaHandleVerify = (name, solution, secret) => {
+        // Call all registered form handlers
+        window._genuineFormHandlers.forEach((handler) => {
+          handler(name, solution, secret);
+        });
+        
+        // Call original handler if it existed
+        if (originalHandler) {
+          originalHandler(name, solution, secret);
         }
+      };
     }
-
-    if(window.genuineCaptchaHandleVerify){
-      const oldHandleVerify=window.genuineCaptchaHandleVerify;
-      window.genuineCaptchaHandleVerify=(name,solution, secret) =>{
-
-        this.myHandleVerify(name,solution, secret);
-
-        (async (name,solution, secret)=>{
-          oldHandleVerify(name,solution, secret);
-        })(name,solution, secret)
+    
+    // Create this form's handler
+    this.myHandleVerify = (name, solution, secret) => {
+      if (name === this.name) {
+        console.log("CAPTCHA verified for form:", name);
+        this.isVerifiedCaptcha = true;
+        this.solution = solution;
+        this.secret = secret;
       }
-    }else
-
-    window.genuineCaptchaHandleVerify=this.myHandleVerify;
-
-    window.genuineCaptchaHandleReset=(name) =>{
-        console.log("CAPTCHA resetted");
-        this.mailTo='';
-        this.isVerifiedCaptcha=false;
-        this.solution='';
-        this.secret='';
+    };
+    
+    // Setup reset handler using same pattern
+    if (!window._genuineFormResetHandlers) {
+      window._genuineFormResetHandlers = new Map();
+      
+      const originalResetHandler = window.genuineCaptchaReset;
+      
+      window.genuineCaptchaReset = (name) => {
+        window._genuineFormResetHandlers.forEach((handler) => {
+          handler(name);
+        });
+        
+        if (originalResetHandler) {
+          originalResetHandler(name);
+        }
+      };
     }
-    this.registerHandleValidateForm();
-    this.registerGenerateSubjectAndBody();
+    
+    this.myHandleReset = (name) => {
+      if (name === this.name) {
+        console.log("CAPTCHA reset for form:", name);
+        this.isVerifiedCaptcha = false;
+        this.solution = '';
+        this.secret = '';
+      }
+    };
   }
 
   connectedCallback() {
     window.genuineForms[this.name]=this.events;
-    setTimeout(() => {
-    const submitBtns = (!this.name || this.name==='genuine-form') ? window.document.querySelectorAll('genuine-form [type="submit"]'):window.document.querySelectorAll(`genuine-form[name="${this.name}"] [type="submit"]`);
-    if(submitBtns.length>1 && !this.name) console.warn("Multiple submit buttons found in genuine-form, only the first one will be used. Use unique named genuine-form if you need multiple forms on one page.");
-    if(submitBtns[0]) submitBtns[0].addEventListener('click', (event) => {
-      event.stopPropagation();
-      if(!this.isValidForm) this.handleValidationFailed();
-      this.sendForm(event);
-    });
-    }, 100);
 
-    (async()=>{
-      let counter = 0;
-
-      while(this.genuineCaptchaNode===null && counter<15){
-        const slotChilds= this.shadowRoot.querySelectorAll('slot')[0].assignedNodes();
-        slotChilds.forEach((node)=>{
-          const genuineCaptchaNode = node.nodeName==='GENUINE-CAPTCHA'?node:(node.hasChildNodes()?node.querySelector('genuine-captcha'):null)
-          if(genuineCaptchaNode!==null){
-            this.genuineCaptchaNode=genuineCaptchaNode;
-            genuineCaptchaNode.name=this.name;
-          }
-        });
-
-        if(this.genuineCaptchaNode===null){
-          await Sleep(100);
-        }
-
-        counter++;
-      }
-
-      if(this.genuineCaptchaNode===null){
-        console.error('Missing <genuine-captcha> web component');
-        return;
-      }
-
-      await this.registerHandleInitialized();
-      this.handleInitialized(this.name,this);
-
+    (async () => {
+        await this.handleInitialized(this.name, this);
     })();
 
-    
+    if (window._genuineFormHandlers) {
+      window._genuineFormHandlers.set(this.name, this.myHandleVerify);
+    }
+    if (window._genuineFormResetHandlers) {
+      window._genuineFormResetHandlers.set(this.name, this.myHandleReset);
+    }
 
+    this.setupObserver = new MutationObserver(() => {
+      if (!this.submitButton) {
+        this.setupSubmitButton();
+      }
+      if (!this.genuineCaptchaNode) {
+        this.findCaptchaNode();
+      }
+    });
+    
+    this.setupObserver.observe(this, {
+      childList: true,
+      subtree: true
+    });
+    
+    // Initial setup with small delay to allow children to render
+    this.setupTimeout = setTimeout(async () => {
+      this.setupSubmitButton();
+      await this.setupCaptcha();
+    }, 100);
 
   }
 
   disconnectedCallback() {
+      if (this.setupTimeout) {
+      clearTimeout(this.setupTimeout);
+      this.setupTimeout = null;
+    }
     if (this.timerId) {
       clearTimeout(this.timerId);
       this.timerId = null;
     }
+    
+    // Abort any ongoing requests
+    if (this.abortController) {
+      this.abortController.abort();
+      this.abortController = null;
+    }
+    
+    // Remove event listener
+    if (this.submitButton && this.submitHandler) {
+      this.submitButton.removeEventListener('click', this.submitHandler);
+      this.submitButton = null;
+      this.submitHandler = null;
+    }
+    
+    // Disconnect observer
+    if (this.setupObserver) {
+      this.setupObserver.disconnect();
+      this.setupObserver = null;
+    }
+    
+    // Cleanup global registries
+    if (window.genuineForms && window.genuineForms[this.name]) {
+      delete window.genuineForms[this.name];
+    }
+    
+    if (window._genuineFormHandlers) {
+      window._genuineFormHandlers.delete(this.name);
+    }
+    
+    if (window._genuineFormResetHandlers) {
+      window._genuineFormResetHandlers.delete(this.name);
+    }
   }
  
+  setupSubmitButton() {
+    // Query only this form's submit buttons
+    const submitBtns = this.querySelectorAll('[type="submit"]');
+    
+    if (submitBtns.length > 1) {
+      console.warn(`Multiple submit buttons found in genuine-form[name="${this.name}"], only the first one will be used.`);
+    }
+    
+    if (submitBtns[0] && !this.submitButton) {
+      this.submitButton = submitBtns[0];
+      this.submitHandler = (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        
+        if (!this.isValidForm) {
+          this.handleValidationFailed();
+          return;
+        }
+        
+        this.sendForm(event);
+      };
+      this.submitButton.addEventListener('click', this.submitHandler);
+    }
+  }
+
+  async setupCaptcha() {
+    await this.findCaptchaNode();
+    
+    if (this.genuineCaptchaNode) {
+      // Set captcha name attribute
+      this.genuineCaptchaNode.setAttribute('name', this.name);
+   
+    } else {
+      console.error(`Missing <genuine-captcha> web component in genuine-form[name="${this.name}"]`);
+    }
+  }
+
+  async findCaptchaNode() {
+    return new Promise((resolve) => {
+      const find = () => {
+        const slot = this.shadowRoot.querySelector('slot');
+        if (!slot) {
+          resolve(null);
+          return;
+        }
+        
+        const slotChildren = slot.assignedNodes();
+        
+        for (const node of slotChildren) {
+          if (node.nodeName === 'GENUINE-CAPTCHA') {
+            this.genuineCaptchaNode = node;
+            resolve(node);
+            return;
+          }
+          
+          if (node.nodeType === Node.ELEMENT_NODE) {
+            const captcha = node.querySelector('genuine-captcha');
+            if (captcha) {
+              this.genuineCaptchaNode = captcha;
+              resolve(captcha);
+              return;
+            }
+          }
+        }
+        
+        resolve(null);
+      };
+      
+      if (this.genuineCaptchaNode){
+        resolve(this.genuineCaptchaNode);
+        return;
+      }
+      // Try immediately
+      find();
+      
+      // If not found, try again after delay
+      if (!this.genuineCaptchaNode) {
+        setTimeout(() => {
+          find();
+        }, 100);
+      }
+    });
+  }
 
   registerHandleValidateForm = async () => {
     let counter=0;
@@ -212,11 +357,8 @@ export default class GenuineForm extends HTMLElement {
     if (name === 'subject') this.subject = newValue;
     if (name === 'receiver') this.receiver = newValue;
     if (name === 'api-key') this._apiKey = newValue;
-    if (name === 'name'){
-      this.name = newValue;
-      if(this.genuineCaptchaNode!==null) this.genuineCaptchaNode.attributes['name']=newValue;
-    } 
     if (name === 'api-url') this.gfApiUrl = newValue;
+    if (name === 'name') this.name = newValue;
   }
 
   get apiKey(){
@@ -224,43 +366,151 @@ export default class GenuineForm extends HTMLElement {
   }
 
   sendForm=async (event)=>{
-        event.preventDefault();
-        if(!this.isVerifiedCaptcha || !this.isValidForm || this.apiKey===''){
-            console.log("Form not valid or Captcha not verified or no receiver/api-key set.");
-            return;
-        }
-
-        const {subject,body} = this.generateSubjectAndBody(this.name,this,this.subject);
-
-        try{
-            const url = this.gfApiUrl;
-            const response = await fetch(`${url}/?captchaSolution=${this.solution}&captchaSecret=${encodeURIComponent(this.secret)}&apiKey=${this.apiKey}&subject=${subject}&body=${encodeURI(body)}`, {
-                method: 'GET'
-            });
-
-            if(response.ok) {
-                const {body} = await response.json();
-                console.log('Success:', body);
-                this.handleSendResponse ({
-                  ok: true,
-                  body: body
-                });
-            }else{
-              this.handleSendResponse ({
-                ok: false,
-                error: 'Error sending request'
-              });
-            }
-        
-        }catch(error ){
-            console.error('Error:', error);
-            this.handleSendResponse ({
-              ok: false,
-              error: error
-            });
-            
-        }
+    event.preventDefault();
+    if (this.isSending) {
+      console.log("Form submission already in progress");
+      return;
     }
+    if(!this.isVerifiedCaptcha || !this.isValidForm || this.apiKey===''){
+        console.log("Form not valid or Captcha not verified or no receiver/api-key set.");
+        return;
+    }
+
+    await this.hooksReady;
+
+    const {subject,body} = this.generateSubjectAndBody(this.name,this,this.subject);
+
+    if (subject.length > 200) {
+      console.error('Subject too long (max 200 characters)');
+      this.handleSendResponse({
+        ok: false,
+        error: 'Subject too long'
+      });
+      return;
+    }
+
+    this.isSending = true;
+    this.setAttribute('data-sending', '');
+
+    if (this.submitButton) {
+      this.submitButton.disabled = true;
+    }
+
+    try{
+      if (this.abortController) {
+        this.abortController.abort();
+      }
+      this.abortController = new AbortController();
+
+      await this.handleStartSending();
+      
+      const response = await fetch(this.gfApiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          captchaSolution: this.solution,
+          captchaSecret: this.secret,
+          apiKey: this.apiKey,
+          subject: subject,
+          body: body
+        }),
+        signal: this.abortController.signal
+      });
+
+      if(response.ok) {
+        const data = await response.json();
+    
+        // Validate response structure
+        if (!data || typeof data !== 'object') {
+          throw new Error('Invalid response format');
+        }
+        
+        console.log('Success:', data.body || data);
+        
+        this.handleSendResponse({
+          ok: true,
+          body: data.body || data
+        });
+        
+        // Dispatch success event
+        this.dispatchEvent(new CustomEvent('form-submit-success', {
+          detail: { body: data.body || data },
+          bubbles: true,
+          composed: true
+        }));
+        
+        // Reset form after successful submission
+        this.resetForm();
+      }else{
+        const errorText = await response.text();
+    
+        this.handleSendResponse({
+          ok: false,
+          error: `Server error: ${response.status} - ${errorText}`
+        });
+        
+        // Dispatch error event
+        this.dispatchEvent(new CustomEvent('form-submit-error', {
+          detail: { error: `Server error: ${response.status}` },
+          bubbles: true,
+          composed: true
+        }));
+      }
+    
+    }catch(error ){
+      if (error.name === 'AbortError') {
+        console.log('Form submission aborted');
+        return;
+      }
+      
+      console.error('Error:', error);
+      
+      this.handleSendResponse({
+        ok: false,
+        error: error.message || 'Unknown error'
+      });
+      
+      // Dispatch error event
+      this.dispatchEvent(new CustomEvent('form-submit-error', {
+        detail: { error: error.message },
+        bubbles: true,
+        composed: true
+      }));
+        
+    }finally {
+      this.isSending = false;
+      
+      // Remove loading state
+      this.removeAttribute('data-sending');
+      
+      // Re-enable submit button
+      if (this.submitButton) {
+        this.submitButton.disabled = false;
+      }
+      
+      await this.handleFinishedSending();
+    }
+  }
+
+  resetForm() {
+    // Reset captcha state
+    this.isVerifiedCaptcha = false;
+    this.solution = '';
+    this.secret = '';
+    
+    // Reset form fields
+    const form = this.shadowRoot.querySelector('form');
+    if (form) {
+      form.reset();
+    }
+    
+    // Trigger captcha reload
+    if (this.genuineCaptchaNode && typeof this.genuineCaptchaNode.loadCaptcha === 'function') {
+      this.genuineCaptchaNode.loadCaptcha();
+    }
+  }
 }
 
 
@@ -268,21 +518,40 @@ async function Sleep(milliseconds) {
   return new Promise((resolve) => setTimeout(resolve, milliseconds));
 }
 
-
-//defer loading because of fastboot and similar
 if (typeof document !== 'undefined') {
-  const tpl1 = document.createElement('template');
-  tpl1.id = 'genuine-form';
-  tpl1.innerHTML = `<script type="module" src="https://cryptng.github.io/genuine-captcha-vanillajs/genuine-captcha.js" defer></script>
-  <form class="genuine-form-container">
-        
-        <slot></slot>
+  if (!customElements.get('genuine-form')) {
+    const initTemplate = () => {
+      if (!document.getElementById('genuine-form')) {
+        const tpl1 = document.createElement('template');
+        tpl1.id = 'genuine-form';
+        tpl1.innerHTML = `<script type="module" src="https://cryptng.github.io/genuine-captcha-vanillajs/genuine-captcha.js" defer></script>
+        <form class="genuine-form-container">
+          <slot></slot>
         </form>`;
-
-  document.querySelector('body').prepend(tpl1);
-
-  customElements.define('genuine-form', GenuineForm);
+        
+        if (document.body) {
+          document.body.prepend(tpl1);
+        } else {
+          document.addEventListener('DOMContentLoaded', () => {
+            if (document.body && !document.getElementById('genuine-form')) {
+              document.body.prepend(tpl1);
+            }
+          });
+        }
+      }
+    };
+    
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initTemplate);
+    } else {
+      initTemplate();
+    }
+    
+    customElements.define('genuine-form', GenuineForm);
+  }
 }
+
+
 
 function _isValidForm(name,rootNode) {
   const elements = rootNode.querySelectorAll("input, select, textarea");
