@@ -1,12 +1,11 @@
 {
   "name": "@genuine-forms/web-components",
-  "version": "1.0.26",
+  "version": "1.0.27",
   "type": "module",
   "main": "genuine-form.js",
   "module": "genuine-form.js",
   "scripts": {
-    "minify": "minify genuine-form.js > genuine-form.min.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "minify": "minify genuine-form.js > genuine-form.min.js"
   },
   "repository": {
     "type": "git",
@@ -22,7 +21,7 @@
   },
   "homepage": "https://github.com/cryptNG/genuine-forms-vanillajs#readme",
   "dependencies": {
-    "@genuine-captcha/web-components": "1.0.15",
+    "@genuine-captcha/web-components": "1.0.18",
     "minify": "^14.1.0"
   }
 }
