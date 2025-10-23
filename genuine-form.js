@@ -524,7 +524,7 @@ if (typeof document !== 'undefined') {
       if (!document.getElementById('genuine-form')) {
         const tpl1 = document.createElement('template');
         tpl1.id = 'genuine-form';
-        tpl1.innerHTML = `<script type="module" src="https://cryptng.github.io/genuine-captcha-vanillajs/genuine-captcha.js" defer></script>
+        tpl1.innerHTML = `<script type="module" src="https://cryptng.github.io/genuine-captcha-vanillajs/genuine-captcha.min.js" defer></script>
         <form class="genuine-form-container">
           <slot></slot>
         </form>`;
