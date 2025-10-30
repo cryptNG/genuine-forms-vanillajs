@@ -603,7 +603,7 @@ function _collectFormValues(rootNode) {
 
     if (el.tagName === "INPUT") {
       if (el.type === "checkbox") {
-        value = el.checked;
+        value= (el.value || '').length>0? (el.value+':'+el.checked):el.checked
       } else if (el.type === "radio") {
         if (el.checked) {
           value = el.value;
