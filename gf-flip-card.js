@@ -56,7 +56,7 @@ export default class GFFlipCard extends HTMLElement {
             
           }
 
-          .genuine-form-container{
+          ::slotted(.gf-front-container) {
             padding:0;
             display: var(--form-display);
             position: relative;
@@ -134,6 +134,11 @@ export default class GFFlipCard extends HTMLElement {
 
     this.flipCard.querySelector('.close-handler').addEventListener('click',()=>{
       this.flipCard.classList.remove('flipped');
+    });
+
+    this.shadowRoot.querySelector('slot[name="front"]').addEventListener("slotchange", (e) => {
+      this.flipCardBackOk = e.target;
+      this.flipCardBackOk.assignedElements()[0]?.classList.add('gf-front-container');
     });
 
     this.shadowRoot.querySelector('slot[name="back-ok"]').addEventListener("slotchange", (e) => {
@@ -309,9 +314,8 @@ if (typeof document !== 'undefined') {
           
           <div class="content">
             <div class="front">
-              <form class="genuine-form-container">
-                <slot name="front"></slot>
-              </form>
+              <slot name="front"></slot>
+             
               <div class="working-state">
                 <slot name="loader"><span class="loader"></span></slot>
               </div>
