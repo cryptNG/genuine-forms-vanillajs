@@ -127,7 +127,7 @@ export default class GFFlipCard extends HTMLElement {
   }
 
   connectedCallback() {
-    this.name = this.closest('genuine-form').name;
+    this.name = this.closest('genuine-form')?.attributes['name']?.value;
     this.flipCard = this.shadowRoot.querySelector('.flip-card');
     this.workingSpinner = this.shadowRoot.querySelector('.working-state');
     this.flipCardFront = this.shadowRoot.querySelector('.flip-card .front');
