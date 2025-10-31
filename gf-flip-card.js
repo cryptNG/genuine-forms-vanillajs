@@ -160,6 +160,18 @@ export default class GFFlipCard extends HTMLElement {
   }
  
   registerResponseHandler = async () => {
+
+    let counter=0;
+    while (window.genuineForms[this.name] === undefined && counter<150) {
+      counter++;
+      await Sleep(100);
+    }
+
+    if(window.genuineForms[this.name]===undefined){
+      console.error(`No genuine-form ${this.name} event handler found in window. Component will not work. Omitting event registration` );
+      return;
+    }
+
     window.genuineForms[this.name].on('send-response',this.handleSendResponse);
     window.genuineForms[this.name].on('started-sending',this.handleStartedSending);
     window.genuineForms[this.name].on('finished-sending',this.handleFinishedSending);
@@ -167,6 +179,10 @@ export default class GFFlipCard extends HTMLElement {
   
 
   unregisterResponseHandler = async () => {
+    if(window.genuineForms[this.name]===undefined){
+      console.error(`No genuine-form ${this.name} event handler found in window. Component will not work. Omitting event unregistration` );
+      return;
+    }
     window.genuineForms[this.name].off('send-response');
     window.genuineForms[this.name].off('started-sending');
     window.genuineForms[this.name].off('finished-sending');
