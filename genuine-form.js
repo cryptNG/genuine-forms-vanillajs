@@ -321,7 +321,7 @@ export default class GenuineForm extends HTMLElement {
 
   registerHandleValidateForm = async () => {
     let counter=0;
-    while (window.genuineFormHandleValidate === undefined && counter<150) {
+    while (window.genuineFormHandleValidate === undefined && counter<20) {
       counter++;
       await Sleep(100);
     }
@@ -330,7 +330,7 @@ export default class GenuineForm extends HTMLElement {
 
   registerHandleInitialized = async () => {
     let counter=0;
-    while (window.genuineFormHandleInitialized === undefined && counter<150) {
+    while (window.genuineFormHandleInitialized === undefined && counter<20) {
       counter++;
       await Sleep(100);
     }
@@ -339,7 +339,7 @@ export default class GenuineForm extends HTMLElement {
 
   registerGenerateSubjectAndBody = async () => {
     let counter=0;
-    while (window.genuineFormGenerateSubjectAndBody === undefined && counter<150) {
+    while (window.genuineFormGenerateSubjectAndBody === undefined && counter<20) {
       counter++;
       await Sleep(100);
     }
