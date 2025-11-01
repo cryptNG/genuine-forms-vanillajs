@@ -9,7 +9,7 @@ export default class GenuineForm extends HTMLElement {
   solution=null;
   isVerifiedCaptcha=false;
   timerId=null;
-  gfApiUrl = `https://genuine-forms.io/api/gf-send-dev/`;
+  gfApiUrl = 'https://genuine-forms.io/api/gf-send-dev/';
 
   handleSendResponse=new Map();
   handleStartSending=new Map();
