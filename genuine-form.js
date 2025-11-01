@@ -563,7 +563,9 @@ function _isValidForm(name,rootNode) {
     if (el.tagName === "INPUT") {
       const type = el.type.toLowerCase();
 
-      if (type === "checkbox") {
+      if (type === "email") {
+        if(! el.checkValidity()) return false;
+      } else if (type === "checkbox") {
         if (!el.checked) return false;
       } else if (type === "radio") {
         // find radios with the same name and check if at least one is checked
