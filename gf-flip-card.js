@@ -143,14 +143,14 @@ export default class GFFlipCard extends HTMLElement {
 
     this.shadowRoot.querySelector('slot[name="back-ok"]').addEventListener("slotchange", (e) => {
       this.flipCardBackOk = e.target;
-      this.flipCardBackOk.assignedElements()[0].querySelector('button')?.addEventListener('click',()=>{
+      this.flipCardBackOk.assignedElements()[0].querySelector('button.close')?.addEventListener('click',()=>{
         this.flipCard.classList.remove('flipped');
       })
     });
 
     this.shadowRoot.querySelector('slot[name="back-error"]').addEventListener("slotchange", (e) => {
       this.flipCardBackError = e.target;
-      this.flipCardBackOk.assignedElements()[0].querySelector('button')?.addEventListener('click',()=>{
+      this.flipCardBackError.assignedElements()[0].querySelector('button.close')?.addEventListener('click',()=>{
         this.flipCard.classList.remove('flipped');
       })
     });
