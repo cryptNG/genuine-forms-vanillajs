@@ -402,7 +402,7 @@ export default class GenuineForm extends HTMLElement {
       }
       this.abortController = new AbortController();
 
-      await Promise.all(this.handleStartSending.map((handler)=>handler()));
+      this.handleStartSending.forEach((handler)=>handler());
       
       const response = await fetch(this.gfApiUrl, {
         method: 'POST',
@@ -491,7 +491,7 @@ export default class GenuineForm extends HTMLElement {
         this.submitButton.disabled = false;
       }
       
-      await Promise.all(this.handleFinishedSending.map((handler)=>handler()));
+      this.handleFinishedSending.forEach((handler)=>handler());
     }
   }
 
