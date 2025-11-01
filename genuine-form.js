@@ -11,11 +11,11 @@ export default class GenuineForm extends HTMLElement {
   timerId=null;
   gfApiUrl = `https://genuine-forms.io/api/gf-send-dev/`;
 
-  handleSendResponse=async(response)=>{console.log("Default handleSendResponse:", response);};
-  handleStartSending=async()=>{};
-  handleFinishedSending=async()=>{};
+  handleSendResponse=new Map();
+  handleStartSending=new Map();
+  handleFinishedSending=new Map();
+  handleValidationFailed=new Map();
   handleValidateForm=(name,form)=>{return _isValidForm(name,form);};
-  handleValidationFailed=async ()=>{};
   handleInitialized=(name,form)=>{console.log("Default handleInitialized:", name, form);};
   generateSubjectAndBody=(name,form,subject='Generic Subject')=>{return {subject:subject,body:JSON.stringify( _collectFormValues(form))};};
 
@@ -38,16 +38,16 @@ export default class GenuineForm extends HTMLElement {
           }
         };
         
-        if (type === 'send-response') this.handleSendResponse = wrappedHandler;
-        if (type === 'started-sending') this.handleStartSending = wrappedHandler;
-        if (type === 'finished-sending') this.handleFinishedSending = wrappedHandler;
-        if (type === 'validation-failed') this.handleValidationFailed = wrappedHandler;
+        if (type === 'send-response') this.handleSendResponse.set(handler, wrappedHandler);
+        if (type === 'started-sending') this.handleStartSending.set(handler, wrappedHandler);
+        if (type === 'finished-sending') this.handleFinishedSending.set(handler, wrappedHandler);
+        if (type === 'validation-failed') this.handleValidationFailed.set(handler, wrappedHandler);
       },
-      off: (type) => {
-        if (type === 'send-response') this.handleSendResponse = (response) => { console.log("Default handleSendResponse:", response); };
-        if (type === 'started-sending') this.handleStartSending = async () => {};
-        if (type === 'finished-sending') this.handleFinishedSending = async () => {};  
-        if (type === 'validation-failed') this.handleValidationFailed = async () => {};
+      off: (type,handler) => {
+        if (type === 'send-response') this.handleSendResponse.delete(handler);
+        if (type === 'started-sending') this.handleStartSending.delete(handler);
+        if (type === 'finished-sending') this.handleFinishedSending.delete(handler);  
+        if (type === 'validation-failed') this.handleValidationFailed.delete(handler);
       }
     };
 
@@ -250,7 +250,7 @@ export default class GenuineForm extends HTMLElement {
         event.stopPropagation();
         
         if (!this.isValidForm) {
-          this.handleValidationFailed();
+          this.handleValidationFailed.forEach((handler)=>handler());
           return;
         }
         
@@ -382,10 +382,10 @@ export default class GenuineForm extends HTMLElement {
 
     if (subject.length > 200) {
       console.error('Subject too long (max 200 characters)');
-      this.handleSendResponse({
+      this.handleSendResponse.forEach((handler)=>handler({
         ok: false,
         error: 'Subject too long'
-      });
+      }));
       return;
     }
 
@@ -402,7 +402,7 @@ export default class GenuineForm extends HTMLElement {
       }
       this.abortController = new AbortController();
 
-      await this.handleStartSending();
+      await this.handleStartSending.forEach((handler)=>handler());
       
       const response = await fetch(this.gfApiUrl, {
         method: 'POST',
@@ -429,10 +429,10 @@ export default class GenuineForm extends HTMLElement {
         
         console.log('Success:', data.body || data);
         
-        this.handleSendResponse({
+        this.handleSendResponse.forEach((handler)=>handler({
           ok: true,
           body: data.body || data
-        });
+        }));
         
         // Dispatch success event
         this.dispatchEvent(new CustomEvent('form-submit-success', {
@@ -448,7 +448,8 @@ export default class GenuineForm extends HTMLElement {
     
         this.handleSendResponse({
           ok: false,
-          error: `Server error: ${response.status} - ${errorText}`
+          status:response.status,
+          error: `${errorText}`
         });
         
         // Dispatch error event
@@ -490,7 +491,7 @@ export default class GenuineForm extends HTMLElement {
         this.submitButton.disabled = false;
       }
       
-      await this.handleFinishedSending();
+      await this.handleFinishedSending.forEach((handler)=>handler());
     }
   }
 
