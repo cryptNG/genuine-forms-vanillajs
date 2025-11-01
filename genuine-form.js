@@ -402,7 +402,7 @@ export default class GenuineForm extends HTMLElement {
       }
       this.abortController = new AbortController();
 
-      await this.handleStartSending.forEach((handler)=>handler());
+      await Promise.all(this.handleStartSending.map((handler)=>handler()));
       
       const response = await fetch(this.gfApiUrl, {
         method: 'POST',
@@ -446,11 +446,11 @@ export default class GenuineForm extends HTMLElement {
       }else{
         const errorText = await response.text();
     
-        this.handleSendResponse({
+        this.handleSendResponse.forEach((handler)=>handler({
           ok: false,
           status:response.status,
           error: `${errorText}`
-        });
+        }));
         
         // Dispatch error event
         this.dispatchEvent(new CustomEvent('form-submit-error', {
@@ -468,10 +468,10 @@ export default class GenuineForm extends HTMLElement {
       
       console.error('Error:', error);
       
-      this.handleSendResponse({
+      this.handleSendResponse.forEach((handler)=>handler({
         ok: false,
         error: error.message || 'Unknown error'
-      });
+      }));
       
       // Dispatch error event
       this.dispatchEvent(new CustomEvent('form-submit-error', {
