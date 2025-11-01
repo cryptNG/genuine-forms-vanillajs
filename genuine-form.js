@@ -491,7 +491,7 @@ export default class GenuineForm extends HTMLElement {
         this.submitButton.disabled = false;
       }
       
-      await this.handleFinishedSending.forEach((handler)=>handler());
+      await Promise.all(this.handleFinishedSending.map((handler)=>handler()));
     }
   }
 
