@@ -3,27 +3,34 @@
     --form-primary-dark: #1e40af;
     --form-primary-text: white;
     --form-secondary: #0ea5e9;
-    --form-accent: #06b6d4;
-    --form-success: #10b981;
     --form-background: transparent;
-    --form-surface: #f8fafc;
     --form-disabled: #64748b;
     --form-text: #060607;
     --form-text-accent: var(--form-text);
     --form-text-muted: #2c394c;
     --form-label-align:inherit;
-    --form-border: #e2e8f0;
+    --form-border-color: #e2e8f0;
     --form-shadow: rgba(0, 0, 0, 0.1);
     --form-gradient: linear-gradient(53deg, #7dc1ec, #2b6eabeb, #2e0063c9);
-    --form-body-border:1px solid var(--form-border);
+    --form-body-border:1px solid var(--form-border-color);
     --form-body-border-radius:1rem;
     --form-body-padding:1.25rem;
     --form-body-background:var(--form-background);
     --form-grid-gap:1rem;
     --form-input-padding:0.6rem;
-    --form-field-border:2px solid var(--form-border);
+    --form-field-border:2px solid var(--form-border-color);
     --form-field-border-radius:0.5rem;
     --form-field-focus-color:var(--form-primary);
+}
+
+genuine-form *{
+    box-sizing: border-box;
+    --verify-button-background-color:var(--form-primary);
+    --verify-button-background-color-hover:var(--form-primary-dark);
+}
+
+gf-flip-card *{
+    box-sizing: border-box;
 }
 
 .form-body{border:var(--form-body-border);border-radius:var(--form-body-border-radius);padding:var(--form-body-padding);background:var(--form-body-background);}
@@ -94,7 +101,7 @@
   transition: all 0.3s;
   font-family: inherit;
   color: var(--form-text);
-  width: calc(100% - 2rem);
+  width: calc(100%);
   outline: none;
 }
 

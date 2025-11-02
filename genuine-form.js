@@ -1,8 +1,4 @@
-
-
-
 import {GenuineCaptcha} from 'https://cryptng.github.io/genuine-captcha-vanillajs/genuine-captcha.min.js';
-
 
 export default class GenuineForm extends HTMLElement {
   secret=null;

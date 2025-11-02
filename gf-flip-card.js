@@ -1,9 +1,3 @@
-
-
-
-//import {GenuineCaptcha} from 'https://cryptng.github.io/genuine-captcha-vanillajs/genuine-captcha.min.js';
-
-
 export default class GFFlipCard extends HTMLElement {
 
   constructor() {
@@ -38,6 +32,7 @@ export default class GFFlipCard extends HTMLElement {
     this.attachShadow({ mode: 'open' });
 
     const style = document.createElement('style');
+
     style.textContent = `
           :host{
             --form-display:flex;
@@ -51,6 +46,11 @@ export default class GFFlipCard extends HTMLElement {
             --form-box-shadow:0 0 15px rgba(0,0,0,0.1);
             --form-body-padding:0;
       
+          }
+
+          genuine-captcha{
+            --verify-button-background-color:var(--form-primary);
+            --verify-button-background-color-hover:var(--form-primary-dark);
           }
 
           .flip-card{
@@ -242,6 +242,7 @@ if (typeof document !== 'undefined') {
         const tpl1 = document.createElement('template');
         tpl1.id = 'gf-flip-card';
         tpl1.innerHTML = `
+        
         <style>.loader {
   width: 32px;
   height: 32px;
@@ -331,13 +332,21 @@ if (typeof document !== 'undefined') {
             
           </div>
         </div>`;
+
+        const link = document.createElement('link');
+          link.setAttribute('href',"https://cryptng.github.io/genuine-forms-vanillajs/gf-base.min.css");
+          link.setAttribute('rel','stylesheet');
+          link.setAttribute('type','text/css');
         
         if (document.body) {
           document.body.prepend(tpl1);
+          
+          document.body.prepend(link);
         } else {
           document.addEventListener('DOMContentLoaded', () => {
-            if (document.body && !document.getElementById('genuine-form')) {
+            if (document.body && !document.getElementById('gf-flip-card')) {
               document.body.prepend(tpl1);
+              document.body.prepend(link);
             }
           });
         }
