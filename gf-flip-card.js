@@ -46,8 +46,10 @@ export default class GFFlipCard extends HTMLElement {
             --form-padding:1rem;
             --form-border-radius:0.5rem;
             --form-border:1px solid rgba(0,0,0,0.1);
-            --form-background-color:transparent;
+            --form-body-border:none;
+            --form-background:transparent;
             --form-box-shadow:0 0 15px rgba(0,0,0,0.1);
+            --form-body-padding:0;
       
           }
 
@@ -62,7 +64,7 @@ export default class GFFlipCard extends HTMLElement {
             position: relative;
             flex-direction:  var(--form-flex-direction);
             gap: var(--form-gap);
-            background-color:var(--form-background-color);
+            background:var(--form-background);
           }
 
           .flip-card {
@@ -75,7 +77,7 @@ export default class GFFlipCard extends HTMLElement {
             padding:var(--form-padding);
             border-radius:var(--form-border-radius);
             border:var(--form-border);
-            background-color:var(--form-background-color);
+            background:var(--form-background);
             box-shadow:var(--form-box-shadow);
 
             transition: transform 1.5s;
@@ -92,7 +94,7 @@ export default class GFFlipCard extends HTMLElement {
           .flip-card .back {
             position: relative;
             border-radius:var(--form-border-radius);
-            background-color:var(--form-background-color);
+            background:var(--form-background);
             backface-visibility: hidden;
             padding: 0;
             margin: 0;
@@ -105,9 +107,10 @@ export default class GFFlipCard extends HTMLElement {
             align-items: center;
             flex-direction: column;
             top: 1rem;
+            left: 1rem;
             position: absolute;
             gap: 1rem;
-            width: calc(100% - 4rem);
+            width: calc(100% - 2rem);
             justify-content: center;
           }
 
@@ -137,20 +140,21 @@ export default class GFFlipCard extends HTMLElement {
     });
 
     this.shadowRoot.querySelector('slot[name="front"]').addEventListener("slotchange", (e) => {
-      this.flipCardBackOk = e.target;
-      this.flipCardBackOk.assignedElements()[0]?.classList.add('gf-front-container');
+      this.flipCardFrontSlot = e.target;
+      this.flipCardFrontSlot.assignedElements()[0]?.classList.add('gf-front-container');
     });
 
     this.shadowRoot.querySelector('slot[name="back-ok"]').addEventListener("slotchange", (e) => {
       this.flipCardBackOk = e.target;
-      this.flipCardBackOk.assignedElements()[0].querySelector('button.close')?.addEventListener('click',()=>{
+      this.flipCardBackOk.assignedElements()[0].querySelector('button.close-back')?.addEventListener('click',()=>{
         this.flipCard.classList.remove('flipped');
       })
+      this.flipCardBackOk.assignedElements()[0]?.classList.add('gf-front-container');
     });
 
     this.shadowRoot.querySelector('slot[name="back-error"]').addEventListener("slotchange", (e) => {
       this.flipCardBackError = e.target;
-      this.flipCardBackError.assignedElements()[0].querySelector('button.close')?.addEventListener('click',()=>{
+      this.flipCardBackError.assignedElements()[0].querySelector('button.close-back')?.addEventListener('click',()=>{
         this.flipCard.classList.remove('flipped');
       })
     });
