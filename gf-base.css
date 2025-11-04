@@ -40,7 +40,7 @@ gf-flip-card *{
 @media (width >=1200px){.form-grid{grid-template-columns:repeat(3, 1fr)}}
 @media (width >=1900px){.form-grid{grid-template-columns:repeat(4, 1fr)}}
 
-.form-row {display:flex;flex-direction: row;justify-content: space-between;}
+.form-row {display:flex;flex-direction: row;justify-content: space-between;gap: 0.4rem;}
 .form-col {display:flex;flex-direction: column;justify-content: flex-start;gap: 0.2rem;}
 
 
@@ -60,6 +60,7 @@ gf-flip-card *{
   gap: 0.2rem;
   align-items: flex-start;
   width: 100%;
+  position:relative;
 }
 
 .form-field.row-style {
@@ -76,18 +77,19 @@ gf-flip-card *{
   font-size: 0.875rem;
   text-align:var(--form-label-align);
   width: 100%;
+  position:relative;
 }
 
 .form-field.row-style label {
     width: auto;
 }
 
-.form-field label:has(>input) {
+.form-field label:has(>input,>select,>textarea) {
     display: flex;
     flex-direction: column;
     gap: 0.2rem;
 }
-.form-field.row-style label:has(>input) {
+.form-field.row-style label:has(>input,>select,>textarea) {
     display: flex;
     flex-direction: row;
     gap: 0.2rem;
@@ -110,7 +112,8 @@ gf-flip-card *{
     width: auto;
 }
 
-.form-field input[type="checkbox"]:required:not(:checked), .form-field input[type="radio"]:required:not(:checked) {
+.form-field input[type="checkbox"]:required:not(:checked),
+.form-field input[type="radio"]:required:not(:checked) {
 
     outline: 2px solid red;
     outline-offset: 0.1rem;
@@ -130,6 +133,12 @@ gf-flip-card *{
     font-size: 0.875rem;
     text-align: var(--form-label-align);
 }
+
+h5 ~ .form-row:has( input:required:not(:valid)),
+h5 ~ .form-col.required:not(:has( input:required:valid)){
+    border-bottom: 3px solid red;
+}
+
 .form-col input{
   width:auto;
 }
@@ -139,7 +148,7 @@ gf-flip-card *{
 }
 
 .form-field select{
-    padding: 0.5rem 0.5rem 0 0.5rem;
+    padding: 0.5rem;
     border: var(--form-field-border);
     border-radius: var(--form-field-border-radius);
     font-size: 1rem;
@@ -152,7 +161,31 @@ gf-flip-card *{
   padding-bottom:0.5rem;
 }
 
-.form-field input:required:invalid,.form-field textarea:required:invalid{
+.form-field input:required ~ em,
+.form-field textarea:required ~ em,
+.form-field select:required ~ em
+{
+    opacity:0;
+    position: absolute;
+    right: 0;
+    bottom: -0.5rem;
+    font-size: small;
+    color: red;
+    transition:all 0.3s ease-in-out; 
+    height: 1rem;
+}
+
+.form-field input:required:invalid ~ em,
+.form-field textarea:required:invalid ~ em,
+.form-field select:required:invalid ~ em
+{
+  opacity:1;
+}
+
+.form-field input:required:invalid,
+.form-field textarea:required:invalid,
+.form-field select:required:invalid
+{
       border-bottom: 3px solid red;
 }
 

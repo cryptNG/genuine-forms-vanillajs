@@ -576,7 +576,7 @@ function _isValidForm(name,rootNode) {
       if (el.multiple) {
         if (el.selectedOptions.length === 0) return false;
       } else {
-        if (!el.value) return false;
+        if (!el.value || el.value==='') return false;
       }
 
     } else if (el.tagName === "TEXTAREA") {
