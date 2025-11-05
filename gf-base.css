@@ -238,8 +238,14 @@ gf-flip-card {
     height: 1rem;
 }
 
-.form-body input[type="checkbox"]:required:not(:checked),
-.form-body input[type="radio"]:required:not(:checked) {
+.form-body>input[type="checkbox"]:required:not(:checked),
+.form-body>input[type="radio"]:required:not(:checked) ,
+.form-body>label>input[type="checkbox"]:required:not(:checked),
+.form-body>label>input[type="radio"]:required:not(:checked) ,
+.form-grid>input[type="checkbox"]:required:not(:checked),
+.form-grid>input[type="radio"]:required:not(:checked) ,
+.form-grid>label>input[type="checkbox"]:required:not(:checked),
+.form-grid>label>input[type="radio"]:required:not(:checked) {
 
     outline: 2px solid var(--form-error-message-color);
     outline-offset: 0.1rem;
