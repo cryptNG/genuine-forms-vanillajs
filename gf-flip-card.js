@@ -3,6 +3,7 @@ export default class GFFlipCard extends HTMLElement {
   constructor() {
     super();
     this.name = this.getAttribute('name') || 'genuine-form';
+    this.theme = this.getAttribute('theme') || 'default';
     this.events={
       on: (type, handler) => {
         const wrappedHandler = async (...args) => {
@@ -43,6 +44,10 @@ export default class GFFlipCard extends HTMLElement {
             --form-border:1px solid rgba(0,0,0,0.1);
             --form-body-border:none;
             --form-background:transparent;
+            --form-background-image:none;
+            --form-background-size:cover;
+            --form-background-repeat:no-repeat;
+            --form-background-position:center;
             --form-box-shadow:0 0 15px rgba(0,0,0,0.1);
             --form-body-padding:0;
       
@@ -78,6 +83,10 @@ export default class GFFlipCard extends HTMLElement {
             border-radius:var(--form-border-radius);
             border:var(--form-border);
             background:var(--form-background);
+            background-image:var(--form-background-image);
+            background-repeat:var(--form-background-repeat);
+            background-size:var(--form-background-size);
+            background-position:var(--form-background-position);
             box-shadow:var(--form-box-shadow);
 
             transition: transform 1.5s;
@@ -129,7 +138,20 @@ export default class GFFlipCard extends HTMLElement {
     ]);
   }
 
+  static get observedAttributes() {
+    return ['theme'];
+  }
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (name === 'theme') this.theme = newValue;
+    if(this.theme!=='default'){
+      this.classList.remove('default');
+      this.classList.add(this.theme);
+    }
+  }
+
+
   connectedCallback() {
+    this.classList.add(this.theme);
     this.name = this.closest('genuine-form')?.attributes['name']?.value;
     this.flipCard = this.shadowRoot.querySelector('.flip-card');
     this.workingSpinner = this.shadowRoot.querySelector('.working-state');
