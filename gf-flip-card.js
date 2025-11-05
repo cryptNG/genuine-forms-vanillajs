@@ -164,6 +164,9 @@ export default class GFFlipCard extends HTMLElement {
     this.shadowRoot.querySelector('slot[name="front"]').addEventListener("slotchange", (e) => {
       this.flipCardFrontSlot = e.target;
       this.flipCardFrontSlot.assignedElements()[0]?.classList.add('gf-front-container');
+      if(!this.flipCardFrontSlot.assignedElements()[0]?.querySelector('.form-body')){
+        this.flipCardFrontSlot.assignedElements()[0]?.classList.add('form-body');
+      }
     });
 
     this.shadowRoot.querySelector('slot[name="back-ok"]').addEventListener("slotchange", (e) => {
