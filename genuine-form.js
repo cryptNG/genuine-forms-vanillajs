@@ -1,4 +1,8 @@
-import {GenuineCaptcha} from 'https://cryptng.github.io/genuine-captcha-vanillajs/genuine-captcha.min.js';
+
+
+
+//import {GenuineCaptcha} from 'https://cryptng.github.io/genuine-captcha-vanillajs/genuine-captcha.min.js';
+
 
 export default class GenuineForm extends HTMLElement {
   secret=null;
@@ -576,7 +580,7 @@ function _isValidForm(name,rootNode) {
       if (el.multiple) {
         if (el.selectedOptions.length === 0) return false;
       } else {
-        if (!el.value || el.value==='') return false;
+        if (!el.value) return false;
       }
 
     } else if (el.tagName === "TEXTAREA") {
