@@ -1,6 +1,6 @@
 {
   "name": "@genuine-forms/web-components",
-  "version": "1.1.14",
+  "version": "1.1.15",
   "type": "module",
   "main": "genuine-form.js",
   "module": "genuine-form.js",
