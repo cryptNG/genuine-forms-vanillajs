@@ -32,6 +32,9 @@
     
     --form-field-border:1px solid var(--form-border-color);
     --form-field-border-radius:0.5rem;
+    --form-file-border:1px solid var(--form-border-color);
+    --form-file-border-radius:0.5rem;
+    --form-file-background-color:hsl(0, 0%, 100%);
     --form-input-focus-border-color:var(--form-primary);
     --form-input-focus-box-shadow:0 0 0 3px hsla(221, 83%, 53%, 0.1);
     --form-error-message-color:var(--form-error);
@@ -139,6 +142,51 @@ gf-flip-card {
     --form-select-option-color:var(--form-text);
   }
 }
+gf-flip-card.dark {
+    --form-primary: hsl(221, 87%, 47%);
+    --form-primary-dark: hsl(226, 71%, 40%);
+    --form-primary-text: hsl(0, 0%, 100%);
+    --form-secondary: hsl(199, 89%, 48%);
+    --form-error: hsl(12, 98%, 53%);
+    --form-background: black;
+    --form-disabled: hsl(218, 3%, 49%);
+    --form-text: hsl(240, 17%, 91%);
+    --form-text-accent: hsl(218, 3%, 49%);
+    --form-text-muted: hsl(216, 27%, 24%);
+    --form-label-align:inherit;
+    --form-border-color: hsl(214, 3%, 51%);
+    --form-shadow: hsla(0, 0%, 100%, 0.1);
+    --form-gradient: linear-gradient(53deg, #7dc1ec, #2b6eabeb, #2e0063c9);
+    --form-body-border:none;
+    --form-body-border-radius:1rem;
+    --form-body-padding:1.25rem;
+    --form-body-background:var(--form-background);
+    --form-grid-gap:1rem;
+    --form-input-padding:0.6rem;
+    --form-input-color:hsl(0, 0%, 90%);
+    --form-input-placeholder-color:hsl(0, 0%, 83%);
+    --form-input-box-shadow:none;
+    --form-input-focus-box-shadow:none;
+    --form-input-font-size:1.2rem;
+    --form-input-background-color: transparent;
+    
+    --form-field-border:1px solid var(--form-border-color);
+    --form-field-border-radius:0.5rem;
+    --form-input-focus-border-color:var(--form-primary);
+    --form-input-focus-box-shadow:0 0 0 3px hsla(221, 83%, 53%, 0.1);
+    --form-error-message-color:var(--form-error);
+    --form-input-invalid-border-bottom: 2px solid var(--form-error-message-color);
+    --form-input-invalid-box-shadow:none;
+    --form-input-focus-invalid-border-bottom: 3px solid var(--form-error-message-color);
+    --form-input-focus-invalid-box-shadow:none;
+    --form-select-appearance:auto;
+    --form-select-border: 1px solid var(--form-border-color);
+    --form-select-focus: var(--form-primary);
+    --form-select-arrow: var(--form-select-border);
+    --form-select-color:var(--form-text-accent);
+    --form-select-option-color:var(--form-text);
+  }
+
 
 
 
@@ -181,7 +229,6 @@ gf-flip-card {
 }
 
 .form-body label {
-  font-weight: 500;
   color: var(--form-text-accent);
   font-size: calc(var(--form-input-font-size) * 0.875);
   text-align:var(--form-label-align);
@@ -215,9 +262,10 @@ gf-flip-card {
     align-items: center;
 }
 
-.form-body input:not([type="checkbox"]):not([type="radio"]),
+.form-body input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
 .form-body textarea,
 .form-body select,
+.form-body label:has( input[type="file"]),
 .form-input {
   padding: var(--form-input-padding);
   border: var(--form-field-border);
@@ -230,6 +278,68 @@ gf-flip-card {
   width: calc(100%);
   outline: none;
   background-color: var(--form-input-background-color);
+}
+
+.form-body label:has( input[type="file"]) {
+    display: inline-block;
+    color: var(--form-input-placeholder-color);
+    cursor: pointer;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: max-content;
+    gap: 0.5rem;
+    margin-top: calc(var(--form-input-font-size) * 0.875 + 0.3rem);
+    width: 100%;
+    justify-content: space-between;
+    padding: var(--form-input-padding);
+}
+.form-body label.row-style:has( input[type="file"]) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap:0.3rem;
+
+}
+
+.form-body label input[type="file"]:after{
+    content: '🗎';
+    display: inline-block;
+    padding: 0;
+    border: var(--form-file-border);
+    border-radius: var(--form-file-border-radius);
+    font-size: calc(var(--form-input-font-size) * 0.9);
+    transition: all 0.3s;
+    font-family: inherit;
+    color: var(--form-text-accent);
+    background-color: var(--form-file-background-color);
+    width: 2rem;
+    text-align: center;
+    position: absolute;
+    right: 1rem;
+
+}
+
+.form-body label input[type="file"]:hover:before{
+    transform: scale(1.05);
+    box-shadow: 2px 3px 6px 0px #80808069;
+}
+
+.form-body input[type="file"]
+{
+    cursor: pointer;    
+    font-size: var(--form-input-font-size);
+    padding:0;
+    max-width: 25rem;
+} 
+
+.form-body input[type="file"]:required:valid{
+    color: var(--form-text);
+}
+
+.form-body input::file-selector-button {
+    
+    width: 0;
+    visibility: hidden;
 }
 
 .form-body select{
@@ -248,10 +358,16 @@ gf-flip-card {
 .form-body>input[type="radio"]:required:not(:checked) ,
 .form-body>label>input[type="checkbox"]:required:not(:checked),
 .form-body>label>input[type="radio"]:required:not(:checked) ,
+.form-body>label>input[type="file"]:required:not(:checked) ,
 .form-grid>input[type="checkbox"]:required:not(:checked),
 .form-grid>input[type="radio"]:required:not(:checked) ,
 .form-grid>label>input[type="checkbox"]:required:not(:checked),
-.form-grid>label>input[type="radio"]:required:not(:checked) {
+.form-grid>label>input[type="radio"]:required:not(:checked),
+.form-grid>label>input[type="file"]:required:not(:checked),
+.form-field>input[type="checkbox"]:required:not(:checked),
+.form-field>input[type="radio"]:required:not(:checked) ,
+.form-field>label>input[type="checkbox"]:required:not(:checked),
+.form-field>label>input[type="radio"]:required:not(:checked){
 
     outline: 2px solid var(--form-error-message-color);
     outline-offset: 0.1rem;
@@ -293,17 +409,17 @@ h5 ~ .form-col.required:not(:has( input:required:valid)){
     color: var(--form-text-accent);
 }
 
-.form-field>label:has( ~ input:not(:placeholder-shown), ~ textarea:not(:placeholder-shown), ~ select>option[hidden]:not(:checked)),
-.form-grid>label:has( ~ input:not(:placeholder-shown), ~ textarea:not(:placeholder-shown), ~ select>option[hidden]:not(:checked)),
-.form-body>label:has( ~ input:not(:placeholder-shown), ~ textarea:not(:placeholder-shown), ~ select>option[hidden]:not(:checked)){
+.form-field>label:has( ~ input:not(:placeholder-shown,[type="file"]), ~ textarea:not(:placeholder-shown), ~ select>option[hidden]:not(:checked)),
+.form-grid>label:has( ~ input:not(:placeholder-shown,[type="file"]), ~ textarea:not(:placeholder-shown), ~ select>option[hidden]:not(:checked)),
+.form-body>label:has( ~ input:not(:placeholder-shown,[type="file"]), ~ textarea:not(:placeholder-shown), ~ select>option[hidden]:not(:checked)){
     opacity:1;
     color: var(--form-text-accent);
     font-size: medium;
 }
 
-.form-field>label:has(>input:not(:placeholder-shown),>textarea:not(:placeholder-shown),>select>option[hidden]:not(:checked)),
-.form-grid>label:has(>input:not(:placeholder-shown),>textarea:not(:placeholder-shown),>select>option[hidden]:not(:checked)),
-.form-body>label:has(>input:not(:placeholder-shown),>textarea:not(:placeholder-shown),>select>option[hidden]:not(:checked)){
+.form-field>label:has(>input:not(:placeholder-shown,[type="file"]),>textarea:not(:placeholder-shown),>select>option[hidden]:not(:checked)),
+.form-grid>label:has(>input:not(:placeholder-shown,[type="file"]),>textarea:not(:placeholder-shown),>select>option[hidden]:not(:checked)),
+.form-body>label:has(>input:not(:placeholder-shown,[type="file"]),>textarea:not(:placeholder-shown),>select>option[hidden]:not(:checked)){
     opacity:1;
     color: var(--form-text-accent);
     font-size: medium;
@@ -360,29 +476,34 @@ h5 ~ .form-col.required:not(:has( input:required:valid)){
   opacity:1;
 }
 
-.form-body input:required:invalid,
-.form-body textarea:required:invalid,
+.form-body input:not([type="file"]):required:invalid, 
+.form-body label:has(input[type="file"]:required:invalid), 
+.form-body textarea:required:invalid, 
 .form-body select:required:invalid
 {
-      border-bottom: var(--form-input-invalid-border-bottom);
-      box-shadow: var(--form-input-invalid-box-shadow);
+      border-bottom: var(--form-input-invalid-border-bottom) !important;
+      box-shadow: var(--form-input-invalid-box-shadow) !important;
 }
 
-.form-body input:focus:required:invalid,
+.form-body input:not([type="file"]):focus:required:invalid,
+.form-body label:has(input[type="file"]:focus:required:invalid), 
 .form-body textarea:focus:required:invalid,
 .form-body select:focus:required:invalid
 {
-      border-bottom: var(--form-input-focus-invalid-border-bottom);
-      box-shadow: var(--form-input-focus-invalid-box-shadow);
+      border-bottom: var(--form-input-focus-invalid-border-bottom) !important;
+      box-shadow: var(--form-input-focus-invalid-box-shadow) !important;
 }
 
 .form-body input::placeholder ,.form-body textarea::placeholder ,.form-input::placeholder  {
     color: var(--form-input-placeholder-color);
 }
-.form-body input:focus,.form-body textarea:focus,.form-input:focus {
+.form-body input:focus:not([type="file"]),
+.form-body label:has(input[type="file"]):focus,
+.form-body textarea:focus,
+.form-input:focus {
   outline: none;
-  border-color: var(--form-input-focus-border-color);
-  box-shadow: var(--form-input-focus-box-shadow);
+  border-color: var(--form-input-focus-border-color) !important;
+  box-shadow: var(--form-input-focus-box-shadow) !important;
 }
 
 .form-btn{

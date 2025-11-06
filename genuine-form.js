@@ -14,7 +14,11 @@ export default class GenuineForm extends HTMLElement {
   handleValidationFailed=new Map();
   handleValidateForm=(name,form)=>{return _isValidForm(name,form);};
   handleInitialized=(name,form)=>{console.log("Default handleInitialized:", name, form);};
-  generateSubjectAndBody=(name,form,subject='Generic Subject')=>{return {subject:subject,body:JSON.stringify( _collectFormValues(form))};};
+  generateSubjectAndBody=async (name,form,subject='Generic Subject')=>{return {
+    subject:subject,
+    body:JSON.stringify( _collectFormValues(form)),
+    payload:JSON.stringify(await _collectFormPayloads(form))
+  };};
 
   constructor() {
     super();
@@ -375,7 +379,7 @@ export default class GenuineForm extends HTMLElement {
 
     await this.hooksReady;
 
-    const {subject,body} = this.generateSubjectAndBody(this.name,this,this.subject);
+    const {subject,body,payload} = await this.generateSubjectAndBody(this.name,this,this.subject);
 
     if (subject.length > 200) {
       console.error('Subject too long (max 200 characters)');
@@ -411,7 +415,8 @@ export default class GenuineForm extends HTMLElement {
           captchaSecret: this.secret,
           apiKey: this.apiKey,
           subject: subject,
-          body: body
+          body: body,
+          payload:payload,
         }),
         signal: this.abortController.signal
       });
@@ -602,6 +607,7 @@ function _collectFormValues(rootNode) {
     let value;
 
     if (el.tagName === "INPUT") {
+      if (el.type === "file") return; // skip file inputs here
       if (el.type === "checkbox") {
         value= (el.value || '').length>0? (el.value+':'+el.checked):el.checked
       } else if (el.type === "radio") {
@@ -634,6 +640,54 @@ function _collectFormValues(rootNode) {
       result[name] = value;
     }
   });
+
+  return result;
+}
+
+async function _collectFormPayloads(rootNode) {
+  const result = {};
+
+  // Query all form elements inside the root node
+  const elements = rootNode.querySelectorAll('input[type="file"]');
+
+  await Promise.all([...elements].map(async el => {
+    const name = el.name;
+    if (!name) return; // Skip if no name attribute
+
+    let value;
+
+    if (el.tagName === "INPUT") {
+      if (el.type === "file" && el.files[0]) {
+
+        const fileOutput = await new Promise((resolve, reject) => {
+          let content = '';
+          const reader = new FileReader();
+          // Wait till complete
+          reader.onloadend = function(e) {
+            content = e.target.result;
+            const result = content.split(/\r\n|\n/);
+            resolve(result);
+          };
+          // Make sure to handle error states
+          reader.onerror = function(e) {
+            reject(e);
+          };
+          reader.readAsText(el.files[0]);
+        });
+       
+
+        console.log(fileOutput);
+
+        result[name]={
+          type:'file',
+          fileType: el.files[0].type,
+          fileName: el.files[0].name,
+          content64:btoa(fileOutput)
+        }
+
+      }
+    }
+  }));
 
   return result;
 }
