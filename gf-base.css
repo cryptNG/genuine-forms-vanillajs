@@ -1,4 +1,4 @@
-:root{
+:root,genuine-form {
     --form-background: transparent;
     --form-background-image: none;
     --form-background-repeat: no-repeat;
@@ -23,6 +23,8 @@
     --form-body-padding:1.25rem;
     --form-body-background:var(--form-background);
     --form-grid-gap:1rem;
+    --form-row-size:17rem;
+    --form-row-gap:var(--fform-grid-gap);
     --form-input-padding-top:0.6rem;
     --form-input-padding-right:0.6rem;
     --form-input-padding-bottom:0.6rem;
@@ -62,7 +64,6 @@ gf-flip-card.sleek {
     --form-body-border-radius: 0;
     --form-body-padding: 0;
     --form-body-background: var(--form-background);
-    --form-grid-gap: 1rem;
     --form-input-padding-top:0.4rem;
     --form-input-padding-right:0.4rem;
     --form-input-padding-bottom:0.4rem;
@@ -133,15 +134,10 @@ genuine-form *{
     --verify-button-background-color-hover:var(--form-primary-dark);
 }
 
-gf-flip-card *{
-    box-sizing: border-box;
-    --form-body-padding:var(--form-body-padding);
-    font-family: "Inter", sans-serif;
-    
-}
+
 
 @media (prefers-color-scheme: dark) {
-gf-flip-card {
+genuine-form {
     --form-primary: hsl(221, 87%, 47%);
     --form-primary-dark: hsl(226, 71%, 40%);
     --form-primary-text: hsl(0, 0%, 100%);
@@ -160,7 +156,6 @@ gf-flip-card {
     --form-body-border-radius:1rem;
     --form-body-padding:1.25rem;
     --form-body-background:var(--form-background);
-    --form-grid-gap:1rem;
     --form-input-padding:0.6rem;
     --form-input-color:hsl(0, 0%, 90%);
     --form-input-placeholder-color:hsl(0, 0%, 83%);
@@ -186,7 +181,7 @@ gf-flip-card {
     --form-select-option-color:var(--form-text);
   }
 }
-gf-flip-card.dark {
+gf-flip-card.dark,genuine-form.dark {
     --form-primary: hsl(221, 87%, 47%);
     --form-primary-dark: hsl(226, 71%, 40%);
     --form-primary-text: hsl(0, 0%, 100%);
@@ -205,7 +200,6 @@ gf-flip-card.dark {
     --form-body-border-radius:1rem;
     --form-body-padding:1.25rem;
     --form-body-background:var(--form-background);
-    --form-grid-gap:1rem;
     --form-input-padding:0.6rem;
     --form-input-color:hsl(0, 0%, 90%);
     --form-input-placeholder-color:hsl(0, 0%, 83%);
@@ -230,8 +224,6 @@ gf-flip-card.dark {
     --form-select-color:var(--form-text-accent);
     --form-select-option-color:var(--form-text);
   }
-
-
 
 
 .form-body{border:var(--form-body-border);border-radius:var(--form-body-border-radius);padding:var(--form-body-padding);background:var(--form-body-background);}
@@ -241,7 +233,10 @@ gf-flip-card.dark {
 @media (width >=1200px){.form-grid{grid-template-columns:repeat(3, 1fr)}}
 @media (width >=1900px){.form-grid{grid-template-columns:repeat(4, 1fr)}} */
 
-.form-row {display:flex;flex-direction: row;justify-content: space-between;gap: 0.4rem;}
+.form-row {display: grid;grid-gap: var(--form-row-gap);grid-template-columns: repeat(auto-fill, var(--form-row-size));}
+.form-row.fr-5 {grid-template-columns: repeat(auto-fill, 5rem);}
+.form-row.fr-10 {grid-template-columns: repeat(auto-fill, 10rem);}
+.form-row.fr-20 {grid-template-columns: repeat(auto-fill, 20rem);}
 .form-col {display:flex;flex-direction: column;justify-content: flex-start;gap: 0.2rem;}
 
 
@@ -402,6 +397,10 @@ gf-flip-card.dark {
     width: 1rem;
     height: 1rem;
 }
+.form-body label:has( input[type="checkbox"]:checked),
+.form-body label:has( input[type="radio"]:checked){
+    color: var(--form-text);
+}
 
 .form-body>input[type="checkbox"]:required:not(:checked),
 .form-body>input[type="radio"]:required:not(:checked) ,
@@ -451,6 +450,7 @@ h5 ~ .form-col.required:not(:has( input:required:valid)){
 .form-row label{
     gap: 0.5rem;
     transition: all 0.3s ease-in-out;
+    width:auto;
 }
 
 .form-field>label:has(>input:placeholder-shown)>*,
