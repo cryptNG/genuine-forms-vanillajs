@@ -24,7 +24,7 @@
     --form-body-background:var(--form-background);
     --form-grid-gap:1rem;
     --form-row-size:17rem;
-    --form-row-gap:var(--fform-grid-gap);
+    --form-row-gap:var(--form-grid-gap);
     --form-input-padding-top:0.6rem;
     --form-input-padding-right:0.6rem;
     --form-input-padding-bottom:0.6rem;
@@ -42,11 +42,13 @@
     --form-file-border-radius:0.5rem;
     --form-file-background-color:hsl(0, 0%, 100%);
     --form-input-focus-border-color:var(--form-primary);
-    --form-input-focus-box-shadow:0 0 0 3px hsla(221, 83%, 53%, 0.1);
+    --form-input-focus-border-color:var(--form-primary);
+    --form-input-focus-box-shadow:0 0 0 2px hsla(221, 83%, 53%, 0.1);
     --form-error-message-color:var(--form-error);
-    --form-input-invalid-border-bottom: 2px solid var(--form-error-message-color);
+    --form-input-invalid-border-bottom: 1px solid var(--form-error-message-color);
     --form-input-invalid-box-shadow:none;
-    --form-input-focus-invalid-border-bottom: 3px solid var(--form-error-message-color);
+    --form-switch-invalid-box-shadow:none;
+    --form-input-focus-invalid-border-bottom: 2px solid var(--form-error-message-color);
     --form-input-focus-invalid-box-shadow:none;
     --form-select-appearance:auto;
     --form-select-border: 1px solid var(--form-border-color);
@@ -63,7 +65,6 @@ gf-flip-card.sleek {
     --form-body-border: none;
     --form-body-border-radius: 0;
     --form-body-padding: 0;
-    --form-body-background: var(--form-background);
     --form-input-padding-top:0.4rem;
     --form-input-padding-right:0.4rem;
     --form-input-padding-bottom:0.4rem;
@@ -78,6 +79,7 @@ gf-flip-card.sleek {
     --form-file-border: 1px solid var(--form-border-color);
     --form-file-border-radius: 0.5rem;
     --form-file-background-color: hsl(0, 0%, 100%);
+    --form-input-focus-border-color: var(--form-primary);
     --form-input-focus-border-color: var(--form-primary);
     --form-input-focus-box-shadow: 0 0 0 3px hsla(221, 83%, 53%, 0.1);
     --form-error-message-color: var(--form-error);
@@ -99,11 +101,13 @@ gf-flip-card.typeform {
     --form-background-size:cover;
     --form-background-position:center;
     --form-background:none;
+    --form-body-background: var(--form-background);
     --form-padding:13rem 1rem 1rem 1rem;
     --form-body-padding:0;
     --form-text-accent:gray;
     --form-field-border:none;
     --form-field-border-radius:0;
+    --form-input-focus-border-color:none;
     --form-input-focus-border-color:none;
     --form-input-padding-top:0;
     --form-input-padding-right:0;
@@ -116,6 +120,7 @@ gf-flip-card.typeform {
     --form-input-font-size:24px;
     --form-input-placeholder-color:gray;
     --form-input-background-color:transparent;
+    --form-switch-invalid-box-shadow: var(--form-error-message-color) 0px 0px 0px 1px;
     --form-input-invalid-border-bottom: none;
     --form-input-invalid-box-shadow:var(--form-error-message-color) 0px 1px;;
     --form-input-focus-invalid-border-bottom: none;
@@ -137,7 +142,9 @@ genuine-form *{
 
 
 @media (prefers-color-scheme: dark) {
-genuine-form {
+genuine-form,gf-flip-card {
+    
+    --form-background-image-opacity:0.1;
     --form-primary: hsl(221, 87%, 47%);
     --form-primary-dark: hsl(226, 71%, 40%);
     --form-primary-text: hsl(0, 0%, 100%);
@@ -159,13 +166,14 @@ genuine-form {
     --form-input-padding:0.6rem;
     --form-input-color:hsl(0, 0%, 90%);
     --form-input-placeholder-color:hsl(0, 0%, 83%);
-    --form-input-box-shadow:none;
-    --form-input-focus-box-shadow:none;
+    --form-input-box-shadow: hsl(0deg 0% 73.73% / 30%) 0px 1px;
+    --form-input-box-shadow: hsl(0deg 0% 73.73% / 30%) 0px 2px;
     --form-input-font-size:1.2rem;
     --form-input-background-color: transparent;
-    
+    --form-switch-invalid-box-shadow: var(--form-error-message-color) 0px 0px 0px 1px;
     --form-field-border:1px solid var(--form-border-color);
     --form-field-border-radius:0.5rem;
+    --form-input-focus-border-color:var(--form-primary);
     --form-input-focus-border-color:var(--form-primary);
     --form-input-focus-box-shadow:0 0 0 3px hsla(221, 83%, 53%, 0.1);
     --form-error-message-color:var(--form-error);
@@ -178,7 +186,14 @@ genuine-form {
     --form-select-focus: var(--form-primary);
     --form-select-arrow: var(--form-select-border);
     --form-select-color:var(--form-text-accent);
-    --form-select-option-color:var(--form-text);
+    --form-select-option-color:var(--form-text-muted);
+  }
+
+  gf-flip-card.sleek{
+    --form-input-box-shadow: hsl(0deg 0% 88.48% / 30%) 0px 1px;
+    --form-input-focus-border-color:rgba(255, 255, 255, 0.494);
+    --form-input-focus-box-shadow: hsla(0, 0%, 64%, 0.574) 0px 2px 0 0px;
+    --form-select-option-color:var(--form-text-muted);
   }
 }
 gf-flip-card.dark,genuine-form.dark {
@@ -199,17 +214,18 @@ gf-flip-card.dark,genuine-form.dark {
     --form-body-border:none;
     --form-body-border-radius:1rem;
     --form-body-padding:1.25rem;
-    --form-body-background:var(--form-background);
+    --form-body-background:transparent;
     --form-input-padding:0.6rem;
     --form-input-color:hsl(0, 0%, 90%);
     --form-input-placeholder-color:hsl(0, 0%, 83%);
-    --form-input-box-shadow:none;
-    --form-input-focus-box-shadow:none;
+    --form-input-box-shadow: hsl(0deg 0% 73.73% / 30%) 0px 1px;
+    --form-input-box-shadow: hsl(0deg 0% 73.73% / 30%) 0px 2px;
     --form-input-font-size:1.2rem;
     --form-input-background-color: transparent;
-    
+    --form-switch-invalid-box-shadow: var(--form-error-message-color) 0px 0px 0px 1px;
     --form-field-border:1px solid var(--form-border-color);
     --form-field-border-radius:0.5rem;
+    --form-input-focus-border-color:var(--form-primary);
     --form-input-focus-border-color:var(--form-primary);
     --form-input-focus-box-shadow:0 0 0 3px hsla(221, 83%, 53%, 0.1);
     --form-error-message-color:var(--form-error);
@@ -222,7 +238,7 @@ gf-flip-card.dark,genuine-form.dark {
     --form-select-focus: var(--form-primary);
     --form-select-arrow: var(--form-select-border);
     --form-select-color:var(--form-text-accent);
-    --form-select-option-color:var(--form-text);
+    --form-select-option-color:var(--form-text-muted);
   }
 
 
@@ -406,18 +422,16 @@ gf-flip-card.dark,genuine-form.dark {
 .form-body>input[type="radio"]:required:not(:checked) ,
 .form-body>label>input[type="checkbox"]:required:not(:checked),
 .form-body>label>input[type="radio"]:required:not(:checked) ,
-.form-body>label>input[type="file"]:required:not(:checked) ,
 .form-grid>input[type="checkbox"]:required:not(:checked),
 .form-grid>input[type="radio"]:required:not(:checked) ,
 .form-grid>label>input[type="checkbox"]:required:not(:checked),
 .form-grid>label>input[type="radio"]:required:not(:checked),
-.form-grid>label>input[type="file"]:required:not(:checked),
 .form-field>input[type="checkbox"]:required:not(:checked),
 .form-field>input[type="radio"]:required:not(:checked) ,
 .form-field>label>input[type="checkbox"]:required:not(:checked),
 .form-field>label>input[type="radio"]:required:not(:checked){
-
-    outline: 2px solid var(--form-error-message-color);
+    box-shadow: var(--form-switch-invalid-box-shadow) !important;
+    outline: var(--form-input-invalid-border-bottom) !important;
     outline-offset: 0.1rem;
 }
 
@@ -438,9 +452,16 @@ gf-flip-card.dark,genuine-form.dark {
     padding-bottom: var(--form-input-padding-bottom);
 }
 
-h5 ~ .form-row:has( input:required:not(:valid)),
-h5 ~ .form-col.required:not(:has( input:required:valid)){
-    border-bottom: 3px solid var(--form-error-message-color);
+h5 ~ .form-row:has( input[type=radio]:required,input[type=checkbox]:required),
+h5 ~ .form-row.required:has( input[type=radio],input[type=checkbox]),
+h5 ~ .form-col.required:has( input[type=radio],input[type=checkbox]){
+    padding-bottom: 0.3rem;
+}
+h5 ~ .form-row:has( input[type=radio]:required:not(:valid),input[type=checkbox]:required:not(:checked)),
+h5 ~ .form-row.required:not(:has( input[type=radio]:required:valid,input[type=checkbox]:checked)),
+h5 ~ .form-col.required:not(:has( input[type=radio]:required:valid,input[type=checkbox]:checked)){
+    border-bottom: var(--form-input-invalid-border-bottom) !important;
+    box-shadow: var(--form-input-invalid-box-shadow) !important;
 }
 
 .form-col input{
@@ -503,6 +524,7 @@ h5 ~ .form-col.required:not(:has( input:required:valid)){
 
 .form-body input[type=checkbox].switch {
     width: calc(var(--form-input-font-size) * 2.25);
+    min-width: calc(var(--form-input-font-size) * 2.25);
     height: var(--form-input-font-size);
     line-height: var(--form-input-font-size);
     border-radius: var(--form-input-font-size);
@@ -510,10 +532,20 @@ h5 ~ .form-col.required:not(:has( input:required:valid)){
     appearance: none;
     border: 1px solid gray;
     cursor: pointer;
+    background-color: transparent;
 }
 
+
+.form-body input[type=checkbox].switch:checked
+ {
+    background: none;
+    background-position: 0 0;
+    background-color: var(--form-text-muted);
+}
+
+
 .form-body input[type=checkbox].switch:after {
-    background: gray;
+    background-color: var(--form-disabled);
     border-radius: var(--form-input-font-size);
     height: calc(var(--form-input-font-size) * 0.8);
     left: calc(var(--form-input-font-size) * 0.1);
@@ -526,17 +558,10 @@ h5 ~ .form-col.required:not(:has( input:required:valid)){
     transition: all .2s ease-out;
 }
 
-.form-body input[type=checkbox].switch:checked
- {
-    background: none;
-    background-position: 0 0;
-    background-color: var(--form-text);
-}
-
 .form-body input[type=checkbox].switch:checked:after
  {
     left:calc((var(--form-input-font-size) * 2.25) - (var(--form-input-font-size) * 0.9));
-    background: #fff;
+    background: var(--form-primary-text);
 }
 
 .form-field>label>select:has(>option[hidden]:checked),
@@ -560,7 +585,7 @@ h5 ~ .form-col.required:not(:has( input:required:valid)){
     opacity:0;
     position: absolute;
     right: 0;
-    bottom: -0.5rem;
+    bottom: -1rem;
     font-size: small;
     color: var(--form-error-message-color);
     transition:all 0.3s ease-in-out; 
@@ -600,6 +625,7 @@ h5 ~ .form-col.required:not(:has( input:required:valid)){
 .form-body textarea:focus,
 .form-input:focus {
   outline: none;
+  border-color: var(--form-input-focus-border-color) !important;
   border-color: var(--form-input-focus-border-color) !important;
   box-shadow: var(--form-input-focus-box-shadow) !important;
 }

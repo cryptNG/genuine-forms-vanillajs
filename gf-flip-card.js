@@ -45,6 +45,7 @@ export default class GFFlipCard extends HTMLElement {
             --form-body-border:none;
             --form-background:transparent;
             --form-background-image:none;
+            --form-background-image-opacity:1;
             --form-background-size:cover;
             --form-background-repeat:no-repeat;
             --form-background-position:center;
@@ -83,14 +84,28 @@ export default class GFFlipCard extends HTMLElement {
             border-radius:var(--form-border-radius);
             border:var(--form-border);
             background:var(--form-background);
-            background-image:var(--form-background-image);
-            background-repeat:var(--form-background-repeat);
-            background-size:var(--form-background-size);
-            background-position:var(--form-background-position);
+            
             box-shadow:var(--form-box-shadow);
 
             transition: transform 1.5s;
             transform-style: preserve-3d;
+         
+          }
+
+          .flip-card .content:before {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            content: "";
+            top: 0;
+            left: 0;
+            border-radius:var(--form-border-radius);
+            z-index: -1;
+            opacity: var(--form-background-image-opacity, 1);
+            background-image:var(--form-background-image);
+            background-repeat:var(--form-background-repeat);
+            background-size:var(--form-background-size);
+            background-position:var(--form-background-position);
          
           }
 
@@ -108,6 +123,7 @@ export default class GFFlipCard extends HTMLElement {
             padding: 0;
             margin: 0;
             height: calc(100% );
+            overflow:hidden;
           }
 
           .flip-card .back {
@@ -164,9 +180,6 @@ export default class GFFlipCard extends HTMLElement {
     this.shadowRoot.querySelector('slot[name="front"]').addEventListener("slotchange", (e) => {
       this.flipCardFrontSlot = e.target;
       this.flipCardFrontSlot.assignedElements()[0]?.classList.add('gf-front-container');
-      if(!this.flipCardFrontSlot.assignedElements()[0]?.querySelector('.form-body')){
-        this.flipCardFrontSlot.assignedElements()[0]?.classList.add('form-body');
-      }
     });
 
     this.shadowRoot.querySelector('slot[name="back-ok"]').addEventListener("slotchange", (e) => {

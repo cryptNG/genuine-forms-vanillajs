@@ -83,6 +83,7 @@ export default class GenuineForm extends HTMLElement {
             flex-direction:  var(--form-flex-direction);
             gap: var(--form-gap);
             background:var(--form-background);
+            border-radius: var(--form-border-radius);
           }
       `;
 
@@ -557,10 +558,10 @@ if (typeof document !== 'undefined') {
 
 
 function _isValidForm(name,rootNode) {
-  const elements = rootNode.querySelectorAll("input, select, textarea");
+  const elements = rootNode.querySelectorAll("input[required], select[required], textarea[required],.required input[type=checkbox]");
 
   for (let el of elements) {
-    if (!el.required) continue; // skip non-required fields
+   // if (!el.required) continue; // skip non-required fields
 
     if (el.tagName === "INPUT") {
       const type = el.type.toLowerCase();
@@ -665,14 +666,13 @@ async function _collectFormPayloads(rootNode) {
           // Wait till complete
           reader.onloadend = function(e) {
             content = e.target.result;
-            const result = content.split(/\r\n|\n/);
-            resolve(result);
+            resolve(content.replace('data:', '').replace(/^.+,/, ''));
           };
           // Make sure to handle error states
           reader.onerror = function(e) {
             reject(e);
           };
-          reader.readAsText(el.files[0]);
+          reader.readAsDataURL(el.files[0]);
         });
        
 
@@ -682,7 +682,7 @@ async function _collectFormPayloads(rootNode) {
           type:'file',
           fileType: el.files[0].type,
           fileName: el.files[0].name,
-          content64:btoa(fileOutput)
+          content64:fileOutput
         }
 
       }
