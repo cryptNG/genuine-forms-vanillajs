@@ -255,7 +255,7 @@ export default class GFCameraComponent extends HTMLElement {
       
 
       var img = this.canvas.toDataURL('image/webp', this.quality).replace('data:', '').replace(/^.+,/, '');
-      window.genuineForms["demo"].call('set-payload',this.payloadName, {
+      window.genuineForms[this.name].call('set-payload',this.payloadName, {
           type: 'file',
           fileName: this.payloadName+'.webp',
           fileType: 'image/png',
@@ -264,7 +264,7 @@ export default class GFCameraComponent extends HTMLElement {
     });
 
     this.retakeButton.addEventListener('click', () => {
-      window.genuineForms["demo"].call('unset-payload', null);
+      window.genuineForms[this.name].call('unset-payload', null);
 
       this.player.classList.add('show');
       this.canvas.classList.remove('show');

@@ -161,7 +161,7 @@ genuine-form,gf-flip-card {
     --form-gradient: linear-gradient(53deg, #7dc1ec, #2b6eabeb, #2e0063c9);
     --form-body-border:none;
     --form-body-border-radius:1rem;
-    --form-body-padding:1.25rem;
+    --form-body-padding:0.25rem;
     --form-body-background:var(--form-background);
     --form-input-padding:0.6rem;
     --form-input-color:hsl(0, 0%, 90%);
@@ -213,7 +213,7 @@ gf-flip-card.dark,genuine-form.dark {
     --form-gradient: linear-gradient(53deg, #7dc1ec, #2b6eabeb, #2e0063c9);
     --form-body-border:none;
     --form-body-border-radius:1rem;
-    --form-body-padding:1.25rem;
+    --form-body-padding:0.25rem;
     --form-body-background:transparent;
     --form-input-padding:0.6rem;
     --form-input-color:hsl(0, 0%, 90%);
@@ -432,8 +432,7 @@ gf-flip-card.dark,genuine-form.dark {
 .form-field>label>input[type="radio"]:required:not(:checked){
     box-shadow: var(--form-switch-invalid-box-shadow) !important;
     outline: var(--form-input-invalid-border-bottom) !important;
-    outline-offset: 0.2px;
-    margin-left:1px;
+    outline-offset: 0.1rem;
 }
 
 .form-col label,.form-label{
