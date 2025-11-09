@@ -7,6 +7,8 @@
     --form-primary: hsl(221, 83%, 53%);
     --form-primary-dark: hsl(226, 71%, 40%);
     --form-primary-text: hsl(0, 0%, 100%);
+    --form-primary-border-radius: 0.5rem;
+    --form-primary-border: 1px solid var(--form-primary);
     --form-secondary: hsl(199, 89%, 48%);
     --form-error: hsl(12, 100%, 50%);
     --form-background: transparent;
@@ -36,18 +38,18 @@
     --form-input-font-size:1.2rem;
     --form-input-background-color: hsl(0, 0%, 100%);
     
-    --form-field-border:1px solid var(--form-border-color);
-    --form-field-border-radius:0.5rem;
+    --form-input-border:1px solid var(--form-border-color);
+    --form-input-border-radius:0.5rem;
     --form-file-border:1px solid var(--form-border-color);
     --form-file-border-radius:0.5rem;
     --form-file-background-color:hsl(0, 0%, 100%);
     --form-input-focus-border-color:var(--form-primary);
-    --form-input-focus-border-color:var(--form-primary);
     --form-input-focus-box-shadow:0 0 0 2px hsla(221, 83%, 53%, 0.1);
     --form-error-message-color:var(--form-error);
+    --form-error-message-border:1px solid var(--form-error-message-color);
     --form-input-invalid-border-bottom: 1px solid var(--form-error-message-color);
     --form-input-invalid-box-shadow:none;
-    --form-switch-invalid-box-shadow:none;
+    --form-switch-invalid-box-shadow:var(--form-error-message-color) 0px 0px 0px 1px;
     --form-input-focus-invalid-border-bottom: 2px solid var(--form-error-message-color);
     --form-input-focus-invalid-box-shadow:none;
     --form-select-appearance:auto;
@@ -74,19 +76,18 @@ gf-flip-card.sleek {
     --form-input-box-shadow: rgba(38, 38, 39, 0.3) 0px 1px;
     --form-input-focus-box-shadow: none;
     --form-input-font-size: 1rem;
-    --form-field-border: none;
-    --form-field-border-radius: 0;
+    --form-input-border: none;
+    --form-input-border-radius: 0;
     --form-file-border: 1px solid var(--form-border-color);
     --form-file-border-radius: 0.5rem;
     --form-file-background-color: hsl(0, 0%, 100%);
     --form-input-focus-border-color: var(--form-primary);
-    --form-input-focus-border-color: var(--form-primary);
-    --form-input-focus-box-shadow: 0 0 0 3px hsla(221, 83%, 53%, 0.1);
+    --form-input-focus-box-shadow: hsla(240, 1%, 15%, 0.3) 0px 2px;
     --form-error-message-color: var(--form-error);
-    --form-input-invalid-border-bottom: 1px solid var(--form-error-message-color);
-    --form-input-invalid-box-shadow: none;
-    --form-input-focus-invalid-border-bottom: 2px solid var(--form-error-message-color);
-    --form-input-focus-invalid-box-shadow: none;
+    --form-input-invalid-border-bottom: none;
+    --form-input-invalid-box-shadow:var(--form-error-message-color) 0px 1px;
+    --form-input-focus-invalid-border-bottom: none;
+    --form-input-focus-invalid-box-shadow:var(--form-error-message-color) 0px 2px;
     --form-select-appearance: auto;
     --form-select-border: 1px solid var(--form-border-color);
     --form-select-focus: var(--form-primary);
@@ -105,9 +106,8 @@ gf-flip-card.typeform {
     --form-padding:13rem 1rem 1rem 1rem;
     --form-body-padding:0;
     --form-text-accent:gray;
-    --form-field-border:none;
-    --form-field-border-radius:0;
-    --form-input-focus-border-color:none;
+    --form-input-border:none;
+    --form-input-border-radius:0;
     --form-input-focus-border-color:none;
     --form-input-padding-top:0;
     --form-input-padding-right:0;
@@ -122,7 +122,7 @@ gf-flip-card.typeform {
     --form-input-background-color:transparent;
     --form-switch-invalid-box-shadow: var(--form-error-message-color) 0px 0px 0px 1px;
     --form-input-invalid-border-bottom: none;
-    --form-input-invalid-box-shadow:var(--form-error-message-color) 0px 1px;;
+    --form-input-invalid-box-shadow:var(--form-error-message-color) 0px 1px;
     --form-input-focus-invalid-border-bottom: none;
     --form-input-focus-invalid-box-shadow:var(--form-error-message-color) 0px 2px;
     --form-select-border:none;
@@ -171,12 +171,12 @@ genuine-form,gf-flip-card {
     --form-input-font-size:1.2rem;
     --form-input-background-color: transparent;
     --form-switch-invalid-box-shadow: var(--form-error-message-color) 0px 0px 0px 1px;
-    --form-field-border:1px solid var(--form-border-color);
-    --form-field-border-radius:0.5rem;
-    --form-input-focus-border-color:var(--form-primary);
+    --form-input-border:1px solid var(--form-border-color);
+    --form-input-border-radius:0.5rem;
     --form-input-focus-border-color:var(--form-primary);
     --form-input-focus-box-shadow:0 0 0 3px hsla(221, 83%, 53%, 0.1);
     --form-error-message-color:var(--form-error);
+    --form-error-message-border:1px solid var(--form-error-message-color);
     --form-input-invalid-border-bottom: 2px solid var(--form-error-message-color);
     --form-input-invalid-box-shadow:none;
     --form-input-focus-invalid-border-bottom: 3px solid var(--form-error-message-color);
@@ -223,12 +223,12 @@ gf-flip-card.dark,genuine-form.dark {
     --form-input-font-size:1.2rem;
     --form-input-background-color: transparent;
     --form-switch-invalid-box-shadow: var(--form-error-message-color) 0px 0px 0px 1px;
-    --form-field-border:1px solid var(--form-border-color);
-    --form-field-border-radius:0.5rem;
-    --form-input-focus-border-color:var(--form-primary);
+    --form-input-border:1px solid var(--form-border-color);
+    --form-input-border-radius:0.5rem;
     --form-input-focus-border-color:var(--form-primary);
     --form-input-focus-box-shadow:0 0 0 3px hsla(221, 83%, 53%, 0.1);
     --form-error-message-color:var(--form-error);
+    --form-error-message-border:1px solid var(--form-error-message-color);
     --form-input-invalid-border-bottom: 2px solid var(--form-error-message-color);
     --form-input-invalid-box-shadow:none;
     --form-input-focus-invalid-border-bottom: 3px solid var(--form-error-message-color);
@@ -284,12 +284,12 @@ gf-flip-card.dark,genuine-form.dark {
 }
 
 .form-body>.form-field.row-style {
-  margin-top: calc(var(--form-input-font-size) * 0.875 + 0.3rem);
+  margin-top: calc(var(--form-input-font-size) * 0.9 + 0.3rem);
 }
 
 .form-body label {
   color: var(--form-text-accent);
-  font-size: calc(var(--form-input-font-size) * 0.875);
+  font-size: calc(var(--form-input-font-size) * 0.9);
   text-align:var(--form-label-align);
   width: 100%;
   position:relative;
@@ -328,8 +328,8 @@ gf-flip-card.dark,genuine-form.dark {
 .form-body label:has( input[type="file"]),
 .form-input {
   padding: var(--form-input-padding);
-  border: var(--form-field-border);
-  border-radius: var(--form-field-border-radius);
+  border: var(--form-input-border);
+  border-radius: var(--form-input-border-radius);
   box-shadow: var(--form-input-box-shadow);
   font-size: var(--form-input-font-size);
   transition: all 0.3s;
@@ -349,7 +349,7 @@ gf-flip-card.dark,genuine-form.dark {
     align-items: center;
     width: max-content;
     gap: 0.5rem;
-    margin-top: calc(var(--form-input-font-size) * 0.875 + 0.3rem);
+    margin-top: calc(var(--form-input-font-size) * 0.9 + 0.3rem);
     width: 100%;
     justify-content: space-between;
     padding: var(--form-input-padding);
@@ -484,16 +484,12 @@ h5 ~ .form-col.required:not(:has( input[type=radio]:required:valid,input[type=ch
 .form-grid>label:has( ~ input:not(:placeholder-shown,[type="file"]), ~ textarea:not(:placeholder-shown), ~ select>option[hidden]:not(:checked)),
 .form-body>label:has( ~ input:not(:placeholder-shown,[type="file"]), ~ textarea:not(:placeholder-shown), ~ select>option[hidden]:not(:checked)){
     opacity:1;
-    color: var(--form-text-accent);
-    font-size: calc(var(--form-input-font-size) * 0.9);
 }
 
 .form-field>label:has(>input:not(:placeholder-shown,[type="file"]),>textarea:not(:placeholder-shown),>select>option[hidden]:not(:checked)),
 .form-grid>label:has(>input:not(:placeholder-shown,[type="file"]),>textarea:not(:placeholder-shown),>select>option[hidden]:not(:checked)),
 .form-body>label:has(>input:not(:placeholder-shown,[type="file"]),>textarea:not(:placeholder-shown),>select>option[hidden]:not(:checked)){
     opacity:1;
-    color: var(--form-text-accent);
-    font-size: calc(var(--form-input-font-size) * 0.9);
 }
 
 .form-field>label:has( ~ input:placeholder-shown,  ~ textarea:placeholder-shown,  ~ select>option[hidden]:checked),
@@ -646,8 +642,8 @@ genuine-captcha button[type="submit"],
 .form-sumbit,
 .form-btn--primary {
     padding: 0.5rem 2rem;
-    border-radius: 0.5rem;
-    border: 1px solid var(--form-primary);
+    border-radius: var(--form-primary-border-radius);
+    border: var(--form-primary-border);
     color: var(--form-primary-text);
     background: var(--form-primary);
     margin: 0.5rem;
@@ -674,4 +670,10 @@ genuine-captcha button[type="submit"]:disabled,
     background-color: var(--form-disabled);
     color: var(--form-text-muted);
     border: 1px solid var(--form-disabled);
+}
+
+@keyframes moveOut {
+    0% { left:0;top:0 }
+    99% { left:0;top:0 }
+    100% { left:-100%;top:-100%; }
 }

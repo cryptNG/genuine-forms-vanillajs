@@ -1,4 +1,7 @@
-import {GenuineCaptcha} from 'https://cryptng.github.io/genuine-captcha-vanillajs/genuine-captcha.min.js';
+
+
+
+//import {GenuineCaptcha} from 'https://cryptng.github.io/genuine-captcha-vanillajs/genuine-captcha.min.js';
 
 
 export default class GenuineForm extends HTMLElement {
@@ -22,6 +25,7 @@ export default class GenuineForm extends HTMLElement {
 
   constructor() {
     super();
+    this.payload={};
     this.name = this.getAttribute('name') || 'genuine-form';
     this.subject = this.getAttribute('subject') || 'Generic Subject';
     this._apiKey = this.getAttribute('api-key');
@@ -49,6 +53,10 @@ export default class GenuineForm extends HTMLElement {
         if (type === 'started-sending') this.handleStartSending.delete(handler);
         if (type === 'finished-sending') this.handleFinishedSending.delete(handler);  
         if (type === 'validation-failed') this.handleValidationFailed.delete(handler);
+      },
+      call: (type, ...args) => {
+        if (type === 'set-payload') this.setPlayload(...args);
+        if (type === 'unset-payload') this.unsetPlayload(...args);
       }
     };
 
@@ -98,6 +106,14 @@ export default class GenuineForm extends HTMLElement {
       this.registerHandleInitialized()
     ]);
   }
+
+  setPlayload(name,data){
+    this.payload[name]=data;
+  }
+
+  unsetPlayload(name){
+    delete this.payload[name];
+  } 
 
   setupCaptchaHandlerRegistry() {
     // Create global handler registry if it doesn't exist
@@ -558,7 +574,7 @@ if (typeof document !== 'undefined') {
 
 
 function _isValidForm(name,rootNode) {
-  const elements = rootNode.querySelectorAll("input[required], select[required], textarea[required],.required input[type=checkbox]");
+  const elements = rootNode.querySelectorAll("input[required], select[required], textarea[required]");
 
   for (let el of elements) {
    // if (!el.required) continue; // skip non-required fields
@@ -589,6 +605,12 @@ function _isValidForm(name,rootNode) {
     } else if (el.tagName === "TEXTAREA") {
       if (!el.value.trim()) return false;
     }
+  }
+
+  const checkboxes = rootNode.querySelectorAll(".required:has(input[type=checkbox])");
+
+  for (let el of checkboxes) {
+    if (!el.querySelector('input[type=checkbox]:checked')) return false;
   }
 
   return true;
@@ -645,6 +667,7 @@ function _collectFormValues(rootNode) {
   return result;
 }
 
+
 async function _collectFormPayloads(rootNode) {
   const result = {};
 
@@ -689,7 +712,7 @@ async function _collectFormPayloads(rootNode) {
     }
   }));
 
-  return result;
+  return {...result,...rootNode.payload};
 }
 
 
