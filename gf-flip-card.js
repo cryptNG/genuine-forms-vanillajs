@@ -39,7 +39,7 @@ export default class GFFlipCard extends HTMLElement {
             --form-display:flex;
             --form-flex-direction:column;
             --form-gap:1rem;
-            --form-padding:1rem;
+            --form-padding:0.5rem;
             --form-border-radius:0.5rem;
             --form-border:1px solid rgba(0,0,0,0.1);
             --form-body-border:none;
@@ -90,6 +90,12 @@ export default class GFFlipCard extends HTMLElement {
             transition: transform 1.5s;
             transform-style: preserve-3d;
          
+          }
+
+          @media (min-width:800px){
+            .flip-card .content {
+              padding:calc(var(--form-padding) * 2);
+            }
           }
 
           .flip-card .content:before {

@@ -432,7 +432,8 @@ gf-flip-card.dark,genuine-form.dark {
 .form-field>label>input[type="radio"]:required:not(:checked){
     box-shadow: var(--form-switch-invalid-box-shadow) !important;
     outline: var(--form-input-invalid-border-bottom) !important;
-    outline-offset: 0.1rem;
+    outline-offset: 0.2px;
+    margin-left:1px;
 }
 
 .form-col label,.form-label{
