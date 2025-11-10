@@ -24,7 +24,11 @@
     --form-body-border-radius:1rem;
     --form-body-padding:1.25rem;
     --form-body-background:var(--form-background);
-    --form-grid-gap:1rem;
+    --form-body-display:flex;
+    --form-body-direction:column;
+    --form-body-gap:1rem;
+    --form-body-gap:1rem;
+    --form-grid-gap:var(--form-body-gap);
     --form-row-size:17rem;
     --form-row-gap:var(--form-grid-gap);
     --form-input-padding-top:0.6rem;
@@ -73,6 +77,7 @@ gf-flip-card.sleek {
     --form-input-padding-left:0;
     --form-input-padding:var(--form-input-padding-top) var(--form-input-padding-right) var(--form-input-padding-bottom) var(--form-input-padding-left);
     --form-input-placeholder-color: hsl(0, 0%, 73%);
+    --form-input-background-color:transparent;
     --form-input-box-shadow: rgba(38, 38, 39, 0.3) 0px 1px;
     --form-input-focus-box-shadow: none;
     --form-input-font-size: 1rem;
@@ -103,7 +108,7 @@ gf-flip-card.typeform {
     --form-background-position:center;
     --form-background:none;
     --form-body-background: var(--form-background);
-    --form-padding:13rem 1rem 1rem 1rem;
+    --form-padding:10rem 0.5rem 0.5rem 0.5rem;
     --form-body-padding:0;
     --form-text-accent:gray;
     --form-input-border:none;
@@ -131,7 +136,11 @@ gf-flip-card.typeform {
 
 }
 
-
+@media (min-width: 800px) {
+    gf-flip-card.typeform {
+        --form-padding: 13rem 1rem 1rem 1rem;
+    }
+}
 
 genuine-form *{
     box-sizing: border-box;
@@ -143,7 +152,7 @@ genuine-form *{
 
 @media (prefers-color-scheme: dark) {
 genuine-form,gf-flip-card {
-    
+    color-scheme: dark;
     --form-background-image-opacity:0.1;
     --form-primary: hsl(221, 87%, 47%);
     --form-primary-dark: hsl(226, 71%, 40%);
@@ -197,6 +206,7 @@ genuine-form,gf-flip-card {
   }
 }
 gf-flip-card.dark,genuine-form.dark {
+    color-scheme: dark;
     --form-primary: hsl(221, 87%, 47%);
     --form-primary-dark: hsl(226, 71%, 40%);
     --form-primary-text: hsl(0, 0%, 100%);
@@ -242,7 +252,9 @@ gf-flip-card.dark,genuine-form.dark {
   }
 
 
-.form-body{border:var(--form-body-border);border-radius:var(--form-body-border-radius);padding:var(--form-body-padding);background:var(--form-body-background);}
+.form-body{border:var(--form-body-border);border-radius:var(--form-body-border-radius);padding:var(--form-body-padding);background:var(--form-body-background);display: var(--form-body-display);
+    flex-direction: var(--form-body-direction);  gap: var(--form-body-gap);}
+
 .form-grid{display:grid;gap:var(--form-grid-gap);grid-template-columns:repeat(1, 1fr)}
 
 /* @media (width >=640px){.form-grid{grid-template-columns:repeat(2, 1fr)}}
@@ -432,7 +444,8 @@ gf-flip-card.dark,genuine-form.dark {
 .form-field>label>input[type="radio"]:required:not(:checked){
     box-shadow: var(--form-switch-invalid-box-shadow) !important;
     outline: var(--form-input-invalid-border-bottom) !important;
-    outline-offset: 0.1rem;
+    outline-offset: 1px;
+    margin-left:1px;
 }
 
 .form-col label,.form-label{

@@ -319,7 +319,9 @@ if (typeof document !== 'undefined') {
         tpl1.id = 'gf-camera-component';
         tpl1.innerHTML = `
 <style>
-
+        .form-field>gf-camera-component{
+          margin:auto;
+        }
   
 </style>
       <div class="camera-capture">
