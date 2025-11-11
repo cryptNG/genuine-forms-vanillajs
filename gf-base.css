@@ -1,4 +1,9 @@
 :root,genuine-form {
+    --form-padding:1rem;
+    --form-border-radius:0.5rem;
+    --form-border:1px solid #ccc;
+    --form-background:transparent;
+    --form-box-shadow:0 2px 4px rgba(0,0,0,0.1);
     --form-background: transparent;
     --form-background-image: none;
     --form-background-repeat: no-repeat;
@@ -26,7 +31,6 @@
     --form-body-background:var(--form-background);
     --form-body-display:flex;
     --form-body-direction:column;
-    --form-body-gap:1rem;
     --form-body-gap:1rem;
     --form-grid-gap:var(--form-body-gap);
     --form-row-size:17rem;
@@ -64,6 +68,16 @@
     --form-select-option-color:var(--form-text);
 }
 
+gf-flip-card{
+    --form-display:block;
+    --form-flex-direction:column;
+    --form-gap:1rem;
+    --form-padding:0;
+    --form-border-radius:0;
+    --form-border:none;
+    --form-background:transparent;
+    --form-box-shadow:none;
+}
 
 
 gf-flip-card.sleek {

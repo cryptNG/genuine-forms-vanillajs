@@ -36,12 +36,12 @@ export default class GFFlipCard extends HTMLElement {
 
     style.textContent = `
           :host{
-            --form-display:flex;
-            --form-flex-direction:column;
-            --form-gap:1rem;
-            --form-padding:0.5rem;
-            --form-border-radius:0.5rem;
-            --form-border:1px solid rgba(0,0,0,0.1);
+            --form-content-display:flex;
+            --form-content-direction:column;
+            --form-content-gap:1rem;
+            --form-content-padding:0.5rem;
+            --form-content-border-radius:0.5rem;
+            --form-content-border:1px solid rgba(0,0,0,0.1);
             --form-body-border:none;
             --form-background:transparent;
             --form-background-image:none;
@@ -59,17 +59,13 @@ export default class GFFlipCard extends HTMLElement {
             --verify-button-background-color-hover:var(--form-primary-dark);
           }
 
-          .flip-card{
-            
-            
-          }
 
           ::slotted(.gf-front-container) {
             padding:0;
-            display: var(--form-display);
+            display: var(--form-content-display);
             position: relative;
-            flex-direction:  var(--form-flex-direction);
-            gap: var(--form-gap);
+            flex-direction:  var(--form-content-direction);
+            gap: var(--form-content-gap);
             background:var(--form-background);
           }
 
@@ -80,9 +76,9 @@ export default class GFFlipCard extends HTMLElement {
 
           .flip-card .content {
             position: relative;
-            padding:var(--form-padding);
-            border-radius:var(--form-border-radius);
-            border:var(--form-border);
+            padding:var(--form-content-padding);
+            border-radius:var(--form-content-border-radius);
+            border:var(--form-content-border);
             background:var(--form-background);
             
             box-shadow:var(--form-box-shadow);
@@ -92,12 +88,6 @@ export default class GFFlipCard extends HTMLElement {
          
           }
 
-          @media (min-width:800px){
-            .flip-card .content {
-              padding:calc(var(--form-padding) * 2);
-            }
-          }
-
           .flip-card .content:before {
             position: absolute;
             width: 100%;
@@ -105,7 +95,7 @@ export default class GFFlipCard extends HTMLElement {
             content: "";
             top: 0;
             left: 0;
-            border-radius:var(--form-border-radius);
+            border-radius:var(--form-content-border-radius);
             z-index: -1;
             opacity: var(--form-background-image-opacity, 1);
             background-image:var(--form-background-image);
@@ -123,7 +113,7 @@ export default class GFFlipCard extends HTMLElement {
           .flip-card .front,
           .flip-card .back {
             position: relative;
-            border-radius:var(--form-border-radius);
+            border-radius:var(--form-content-border-radius);
             background:var(--form-background);
             backface-visibility: hidden;
             padding: 0;
@@ -288,7 +278,10 @@ if (typeof document !== 'undefined') {
         tpl1.id = 'gf-flip-card';
         tpl1.innerHTML = `
         
-        <style>.loader {
+        <style>
+
+
+.loader {
   width: 32px;
   height: 32px;
   transform: translateY(100%);

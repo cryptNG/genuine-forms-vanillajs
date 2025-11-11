@@ -258,7 +258,7 @@ export default class GFCameraComponent extends HTMLElement {
       window.genuineForms[this.name].call('set-payload',this.payloadName, {
           type: 'file',
           fileName: this.payloadName+'.webp',
-          fileType: 'image/png',
+          fileType: 'image/webp',
           content64: img
       });
     });
@@ -319,9 +319,7 @@ if (typeof document !== 'undefined') {
         tpl1.id = 'gf-camera-component';
         tpl1.innerHTML = `
 <style>
-        .form-field>gf-camera-component{
-          margin:auto;
-        }
+
   
 </style>
       <div class="camera-capture">

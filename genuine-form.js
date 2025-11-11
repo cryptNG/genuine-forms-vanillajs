@@ -74,11 +74,6 @@ export default class GenuineForm extends HTMLElement {
             --form-display:flex;
             --form-flex-direction:column;
             --form-gap:1rem;
-            --form-padding:1rem;
-            --form-border-radius:0.5rem;
-            --form-border:1px solid #ccc;
-            --form-background:transparent;
-            --form-box-shadow:0 2px 4px rgba(0,0,0,0.1);
       
           }
 
@@ -87,8 +82,6 @@ export default class GenuineForm extends HTMLElement {
             position: relative;
             flex-direction:  var(--form-flex-direction);
             gap: var(--form-gap);
-            background:var(--form-background);
-            border-radius: var(--form-border-radius);
           }
       `;
 
