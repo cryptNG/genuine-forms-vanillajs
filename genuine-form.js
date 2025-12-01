@@ -116,9 +116,9 @@ export default class GenuineForm extends HTMLElement {
       // Create global dispatcher
       window.genuineCaptchaHandleVerify = (name, solution, secret) => {
         // Call all registered form handlers
-        window._genuineFormHandlers.forEach((handler) => {
+        for(const [,handler] of window._genuineFormHandlers) {
           handler(name, solution, secret);
-        });
+        }
         
         // Call original handler if it existed
         if (originalHandler) {
