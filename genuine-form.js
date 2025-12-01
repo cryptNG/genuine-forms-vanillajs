@@ -258,7 +258,10 @@ export default class GenuineForm extends HTMLElement {
         event.stopPropagation();
         
         if (!this.isValidForm) {
-          this.handleValidationFailed.forEach((handler)=>handler());
+          for( const [,handler] of this.handleValidationFailed){
+            handler();
+          }
+          
           return;
         }
         
@@ -390,10 +393,12 @@ export default class GenuineForm extends HTMLElement {
 
     if (subject.length > 200) {
       console.error('Subject too long (max 200 characters)');
-      this.handleSendResponse.forEach((handler)=>handler({
-        ok: false,
-        error: 'Subject too long'
-      }));
+      for(const [,handler] of this.handleSendResponse){
+        handler({
+          ok: false,
+          error: 'Subject too long'
+        });
+      }
       return;
     }
 
@@ -410,7 +415,9 @@ export default class GenuineForm extends HTMLElement {
       }
       this.abortController = new AbortController();
 
-      this.handleStartSending.forEach((handler)=>handler());
+      for(const [,handler] of this.handleStartSendin){
+        handler();
+      }
       
       const response = await fetch(this.gfApiUrl, {
         method: 'POST',
@@ -438,10 +445,12 @@ export default class GenuineForm extends HTMLElement {
         
         console.log('Success:', data.body || data);
         
-        this.handleSendResponse.forEach((handler)=>handler({
-          ok: true,
-          body: data.body || data
-        }));
+        for(const [,handler] of this.handleSendResponse){
+          handler({
+            ok: true,
+            body: data.body || data
+          });
+        }
         
         // Dispatch success event
         this.dispatchEvent(new CustomEvent('form-submit-success', {
@@ -455,11 +464,13 @@ export default class GenuineForm extends HTMLElement {
       }else{
         const errorText = await response.text();
     
-        this.handleSendResponse.forEach((handler)=>handler({
-          ok: false,
-          status:response.status,
-          error: `${errorText}`
-        }));
+        for(const [,handler] of this.handleSendResponse){
+          handler({
+            ok: false,
+            status:response.status,
+            error: `${errorText}`
+          });
+        }
         
         // Dispatch error event
         this.dispatchEvent(new CustomEvent('form-submit-error', {
@@ -477,10 +488,12 @@ export default class GenuineForm extends HTMLElement {
       
       console.error('Error:', error);
       
-      this.handleSendResponse.forEach((handler)=>handler({
-        ok: false,
-        error: error.message || 'Unknown error'
-      }));
+      for(const [,handler] of this.handleSendResponse){
+        handler({
+          ok: false,
+          error: error.message || 'Unknown error'
+        });
+      }
       
       // Dispatch error event
       this.dispatchEvent(new CustomEvent('form-submit-error', {
@@ -500,7 +513,9 @@ export default class GenuineForm extends HTMLElement {
         this.submitButton.disabled = false;
       }
       
-      this.handleFinishedSending.forEach((handler)=>handler());
+      for(const [,handler] of this.handleFinishedSending){
+        handler();
+      }
     }
   }
 
