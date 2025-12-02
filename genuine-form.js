@@ -415,7 +415,7 @@ export default class GenuineForm extends HTMLElement {
       }
       this.abortController = new AbortController();
 
-      for(const [,handler] of this.handleStartSendin){
+      for(const [,handler] of this.handleStartSending){
         handler();
       }
       

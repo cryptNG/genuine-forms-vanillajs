@@ -224,7 +224,6 @@ export default class GFFlipCard extends HTMLElement {
 
   unregisterResponseHandler = async () => {
     if(window.genuineForms[this.name]===undefined){
-      console.error(`No genuine-form ${this.name} event handler found in window. Component will not work. Omitting event unregistration` );
       return;
     }
     window.genuineForms[this.name].off('send-response');
